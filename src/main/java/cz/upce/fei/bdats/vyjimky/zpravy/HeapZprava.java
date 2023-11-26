@@ -8,7 +8,9 @@ import cz.upce.fei.bdats.halda.IAbstrHeap;
  * @see IAbstrHeap
  */
 public enum HeapZprava {
-    PRAZDNE_POLE("Vstupní pole je prázdné");
+    PRAZDNE_POLE("Vstupní pole je prázdné"),
+    NULL_INICIALIZACNI_KAPACITA("Inicializační kapacita musí být větší než 0"),
+    NULL_INICIALIZACNI_KOMPARATOR("Porovnávací kritérium «komparátor» je null"),;
 
     private final String zprava;
 

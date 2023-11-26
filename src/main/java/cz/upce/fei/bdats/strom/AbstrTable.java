@@ -42,15 +42,15 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
     private class Uzel {
         K klic;
         V hodnota;
-        Uzel rodic;
-        Uzel vlevo;
-        Uzel vpravo;
+        Uzel predek;
+        Uzel levySyn;
+        Uzel pravySyn;
 
-        Uzel(K klic, V hodnota, Uzel rodic) {
+        Uzel(K klic, V hodnota, Uzel predek) {
             this.klic = klic;
             this.hodnota = hodnota;
-            this.rodic = rodic;
-            vlevo = vpravo = null;
+            this.predek = predek;
+            levySyn = pravySyn = null;
         }
     }
 
@@ -84,8 +84,8 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
      *      </ul>
      * <li> <b>else</b>
      *      <ul>
-     *      <li> <b>pocetVlevo = mohutnostRekurzivne(uzel.vlevo)</b>: Spočítá počet uzlů vlevo
-     *      <li> <b>pocetVpravo = mohutnostRekurzivne(uzel.vpravo)</b>: Spočítá počet uzlů vpravo
+     *      <li> <b>pocetVlevo = mohutnostRekurzivne(uzel.levySyn)</b>: Spočítá počet uzlů vlevo
+     *      <li> <b>pocetVpravo = mohutnostRekurzivne(uzel.pravySyn)</b>: Spočítá počet uzlů vpravo
      *      <li> <b>return</b>: Spočítá a vrátí počet uzlů pod tímto uzlem:
      *          <ol>
      *          <li> Sečte počet uzlů vlevo a vpravo
@@ -102,8 +102,8 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
         if (uzel == null) {
             return NULTA_HODNOTA;
         } else {
-            int pocetVlevo = mohutnostRekurzivne(uzel.vlevo);
-            int pocetVpravo = mohutnostRekurzivne(uzel.vpravo);
+            int pocetVlevo = mohutnostRekurzivne(uzel.levySyn);
+            int pocetVpravo = mohutnostRekurzivne(uzel.pravySyn);
             return JEDNICKA + pocetVlevo + pocetVpravo;
         }
     }
@@ -151,10 +151,10 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
                 throw new NoSuchElementException();
             try {
                 final Uzel aktualniUzel = fronta.odeberZeZacatku();
-                if (aktualniUzel.vlevo != null)
-                    fronta.vlozNaKonec(aktualniUzel.vlevo);
-                if (aktualniUzel.vpravo != null)
-                    fronta.vlozNaKonec(aktualniUzel.vpravo);
+                if (aktualniUzel.levySyn != null)
+                    fronta.vlozNaKonec(aktualniUzel.levySyn);
+                if (aktualniUzel.pravySyn != null)
+                    fronta.vlozNaKonec(aktualniUzel.pravySyn);
                 return aktualniUzel.hodnota;
             } catch (FifoException ex) {
                 throw new NoSuchElementException(
@@ -193,8 +193,8 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
          * <li> Odebere uzel z vrcholu zásobníku a přejde na pravého potomka tohoto uzlu, pak pokračuje v iteraci,
          * čímž postupně prochází strom zleva doprava
          *     <ul>
-         *     <li> <b>aktUzel = zasobnik.odeber()</b>
-         *     <li> <b>aktUzel = aktUzel.vpravo</b>
+         *     <li> <b>aktUzel = zasobnik.odeberZeZacatku()</b>
+         *     <li> <b>aktUzel = aktUzel.pravySyn</b>
          *     </ul>
          * </ol>
          *
@@ -207,11 +207,11 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
             try {
                 while (aktualniUzel != null) {
                     zasobnik.vlozNaZacatek(aktualniUzel);
-                    aktualniUzel = aktualniUzel.vlevo;
+                    aktualniUzel = aktualniUzel.levySyn;
                 }
                 aktualniUzel = zasobnik.odeberZeZacatku();
                 final V hodnota = aktualniUzel.hodnota;
-                aktualniUzel = aktualniUzel.vpravo;
+                aktualniUzel = aktualniUzel.pravySyn;
                 return hodnota;
             } catch (LifoException e) {
                 throw new NoSuchElementException(
@@ -282,9 +282,9 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
         if (jeNula(klic, uzel.klic))
             return uzel;
         if (jeZaporne(klic, uzel.klic))
-            return najdiRekurzivne(uzel.vlevo, klic);
+            return najdiRekurzivne(uzel.levySyn, klic);
         if (jeKladne(klic, uzel.klic))
-            return najdiRekurzivne(uzel.vpravo, klic);
+            return najdiRekurzivne(uzel.pravySyn, klic);
 
         return null;
     }
@@ -327,14 +327,14 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
      *     <ul>
      *     <li> <b>jeKladne(aktualniUzel.klic, klic)</b>: Pokud klíč uzlu je větší než klíč nového uzlu {@code klic}:
      *          <ul>
-     *          <li> <b>if(aktualniUzel.vlevo == null)</b>: Vloží nový uzel do levého podstromu
-     *          <li> <b>else</b>: Pokud levý potomek uzlu {@code aktualniUzel.vlevo} není prázdný, volá se rekurzivně
+     *          <li> <b>if(aktualniUzel.levySyn == null)</b>: Vloží nový uzel do levého podstromu
+     *          <li> <b>else</b>: Pokud levý potomek uzlu {@code aktualniUzel.levySyn} není prázdný, volá se rekurzivně
      *          tato metoda pro tohoto levého potomka
      *          </ul>
      *     <li> <b>else</b>: Pokud klíč uzlu je menší nebo roven klíči nového uzlu {@code klic}:
      *          <ul>
-     *          <li> <b>if(aktualniUzel.vpravo == null)</b>: Vloží nový uzel do pravého podstromu
-     *          <li> <b>else</b>: Pokud pravý potomek uzlu {@code aktualniUzel.vpravo} není prázdný, volá se
+     *          <li> <b>if(aktualniUzel.pravySyn == null)</b>: Vloží nový uzel do pravého podstromu
+     *          <li> <b>else</b>: Pokud pravý potomek uzlu {@code aktualniUzel.pravySyn} není prázdný, volá se
      *          rekurzivně tato metoda pro pravého potomka
      *          </ul>
      *     </ul>
@@ -346,15 +346,15 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
      */
     private void vlozRekurzivne(K klic, V hodnota, @NotNull Uzel aktualniUzel) {
         if (jeKladne(aktualniUzel.klic, klic)) {
-            if (aktualniUzel.vlevo == null)
-                aktualniUzel.vlevo = new Uzel(klic, hodnota, aktualniUzel);
+            if (aktualniUzel.levySyn == null)
+                aktualniUzel.levySyn = new Uzel(klic, hodnota, aktualniUzel);
             else
-                vlozRekurzivne(klic, hodnota, aktualniUzel.vlevo);
+                vlozRekurzivne(klic, hodnota, aktualniUzel.levySyn);
         } else {
-            if (aktualniUzel.vpravo == null)
-                aktualniUzel.vpravo = new Uzel(klic, hodnota, aktualniUzel);
+            if (aktualniUzel.pravySyn == null)
+                aktualniUzel.pravySyn = new Uzel(klic, hodnota, aktualniUzel);
             else
-                vlozRekurzivne(klic, hodnota, aktualniUzel.vpravo);
+                vlozRekurzivne(klic, hodnota, aktualniUzel.pravySyn);
         }
     }
 // </editor-fold>
@@ -414,9 +414,9 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
         }
 
         if (jeLevyPotomek(uzel)) {
-            odeberUzelSJednimPotomkem(uzel, uzel.vlevo);
+            odeberUzelSJednimPotomkem(uzel, uzel.levySyn);
         } else if (jePravyPotomek(uzel)) {
-            odeberUzelSJednimPotomkem(uzel, uzel.vpravo);
+            odeberUzelSJednimPotomkem(uzel, uzel.pravySyn);
         } else if (jeListem(uzel)) {
             odeberUzelBezPotomku(uzel);
         }
@@ -436,15 +436,15 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
      */
     private Uzel najdiNaslednika(Uzel uzel) {
         if (jePravyPotomek(uzel)) {
-            uzel = uzel.vpravo;
-            while (uzel.vlevo != null)
-                uzel = uzel.vlevo;
+            uzel = uzel.pravySyn;
+            while (uzel.levySyn != null)
+                uzel = uzel.levySyn;
             return uzel;
         }
-        Uzel rodic = uzel.rodic;
-        while (rodic != null && uzel == rodic.vpravo) {
+        Uzel rodic = uzel.predek;
+        while (rodic != null && uzel == rodic.pravySyn) {
             uzel = rodic;
-            rodic = uzel.rodic;
+            rodic = uzel.predek;
         }
         return rodic;
     }
@@ -459,7 +459,7 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
      * což znamená, že potomek se stane novým levým potomkem rodiče odebraného uzlu
      * <li> <b>jePravymPotomkem()</b>: Potomek se připojí na místo odebraného uzlu (tj. potomek se stane novým
      * pravým potomkem rodiče odebraného uzlu)
-     * <li> <b>potomek.rodic = uzel.rodic</b>: Aktualizuje rodiče potomka tak, aby ukazoval na rodiče odebraného
+     * <li> <b>potomek.predek = uzel.predek</b>: Aktualizuje rodiče potomka tak, aby ukazoval na rodiče odebraného
      * uzlu
      * </ol>
      *
@@ -470,10 +470,10 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
         if (jeKorenem(uzel))
             koren = potomek;
         else if (jeLevymPotomkem(uzel))
-            uzel.rodic.vlevo = potomek;
+            uzel.predek.levySyn = potomek;
         else if (jePravymPotomkem(uzel))
-            uzel.rodic.vpravo = potomek;
-        potomek.rodic = uzel.rodic;
+            uzel.predek.pravySyn = potomek;
+        potomek.predek = uzel.predek;
     }
 
     /**
@@ -493,9 +493,9 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
         if (jeKorenem(uzel))
             koren = null;
         else if (jeLevymPotomkem(uzel))
-            uzel.rodic.vlevo = null;
+            uzel.predek.levySyn = null;
         else if (jePravymPotomkem(uzel))
-            uzel.rodic.vpravo = null;
+            uzel.predek.pravySyn = null;
     }
 // </editor-fold>
 
@@ -523,7 +523,6 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
             case SIRKA -> new SirkaIterator();
             case HLOUBKA -> new HloubkaIterator();
         };
-
         while (iterator.hasNext()) {
             switch (typ) {
                 case SIRKA -> {
@@ -533,14 +532,13 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
                 case HLOUBKA -> sb.append(iterator.next()).append(ODRADKOVANI);
             }
         }
-
         return sb.toString();
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Privátní metody: Porovnávání klíčů">
     /**
-     * Porovná výsledek metody compareTo s nulou
+     * Porovná výsledek metody {@code compareTo} s nulou
      *
      * <p>{@link Comparable#compareTo(Object)} vratí nulu pokud aktuální instance {@code this} je "rovná" druhé instanci {@code other}
      *
@@ -552,7 +550,7 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
     private boolean jeNula(@NotNull K obj1, K obj2) { return obj1.compareTo(obj2) == NULTA_HODNOTA; }
 
     /**
-     * Porovná výsledek metody compareTo s kladným číslem
+     * Porovná výsledek metody {@code compareTo} s kladným číslem
      *
      * <p>{@link Comparable#compareTo(Object)} vratí kladné číslo pokud aktuální instance {@code this} je "větší" než druhá instance {@code other}
      *
@@ -564,7 +562,7 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
     private boolean jeKladne(@NotNull K obj1, K obj2) { return obj1.compareTo(obj2) > NULTA_HODNOTA; }
 
     /**
-     * Porovná výsledek metody compareTo s záporným číslem
+     * Porovná výsledek metody {@code compareTo} s záporným číslem
      *
      * <p>{@link Comparable#compareTo(Object)} vratí záporné číslo pokud aktuální instance {@code this} je "menší" než druhá instance {@code other}
      *
@@ -577,31 +575,31 @@ public final class AbstrTable<K extends Comparable<K>, V> implements IAbstrTable
 
 // <editor-fold defaultstate="collapsed" desc="Privátní metody: Zjišťováví vztahů">
     private boolean jsouObaPotomky(@NotNull Uzel uzel) {
-    return uzel.vlevo != null && uzel.vpravo != null;
+    return uzel.levySyn != null && uzel.pravySyn != null;
 }
 
     private boolean jePravyPotomek(@NotNull Uzel uzel) {
-        return uzel.vpravo != null;
+        return uzel.pravySyn != null;
     }
 
     private boolean jeLevyPotomek(@NotNull Uzel uzel) {
-        return uzel.vlevo != null;
+        return uzel.levySyn != null;
     }
 
     private boolean jeKorenem(@NotNull Uzel uzel) {
-        return uzel.rodic == null;
+        return uzel.predek == null;
     }
 
     private boolean jeListem(@NotNull Uzel uzel) {
-        return uzel.vlevo == null && uzel.vpravo == null;
+        return uzel.levySyn == null && uzel.pravySyn == null;
     }
 
     private boolean jeLevymPotomkem(@NotNull Uzel uzel) {
-        return uzel == uzel.rodic.vlevo;
+        return uzel == uzel.predek.levySyn;
     }
 
     private boolean jePravymPotomkem(@NotNull Uzel uzel) {
-        return uzel == uzel.rodic.vpravo;
+        return uzel == uzel.predek.pravySyn;
     }
 // </editor-fold>
 
