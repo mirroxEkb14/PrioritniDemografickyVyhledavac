@@ -1,20 +1,23 @@
-package upce.cz.fei.bdats.model;
+package cz.upce.fei.bdats.model;
 
+//<editor-fold defaultstate="collapsed" desc="Importy">
 import org.jetbrains.annotations.NotNull;
-import upce.cz.fei.bdats.validatory.IntegerValidator;
-import upce.cz.fei.bdats.validatory.TextValidator;
-import upce.cz.fei.bdats.validatory.Validator;
-import upce.cz.fei.bdats.vyjimky.ObecException;
-import upce.cz.fei.bdats.vyjimky.zpravy.ObecZprava;
+import cz.upce.fei.bdats.validatory.IntegerValidator;
+import cz.upce.fei.bdats.validatory.TextValidator;
+import cz.upce.fei.bdats.validatory.Validator;
+import cz.upce.fei.bdats.vyjimky.ObecException;
+import cz.upce.fei.bdats.vyjimky.zpravy.ObecZprava;
 
 import java.io.ObjectStreamClass;
 import java.io.Serial;
 import java.io.Serializable;
+// </editor-fold>
 
 /**
- * Třída typu záznam slouží k reprezentaci informací o obci a používá validační funkcionální interfejsy
- * prostřednictvím kterých jsou ověřovány vstupní hodnoty parametrů konstruktoru, což umožňuje flexibilní
- * nastavení validačních pravidel při konstrukci instance třídy
+ * Třída reprezentuje informací o obci
+ *
+ * <p> Třída používá validační funkcionální interfejsy prostřednictvím kterých jsou ověřovány vstupní hodnoty
+ * parametrů konstruktoru, což umožňuje flexibilní nastavení validačních pravidel při konstrukci instance třídy
  *
  * <p> <b>Poznámka</b>: Alternativně by se tady dalo využit záznamovou třídu {@code record} sloužící k reprezentaci a uchování
  * dat a jsou třídy tohoto typu navrženy tak, aby byly jednoduché, neměnné a automaticky generovaly určité
@@ -38,7 +41,7 @@ import java.io.Serializable;
 public final class Obec implements Serializable {
 
     /**
-     * Identifikační číslo verze serializace pro tuto třídu
+     * Konstanta reprezentuje identifikační číslo verze serializace pro tuto třídu
      *
      * <p> Serial Version UID jednoznačně identifikuje verze třídy, čímž zajišťuje kompatibilitu mezi různými
      * verzemi tříd. Tzn. provádí kontrolu, zda se starší verze třídy shoduje s novější verzí při deserializaci.
@@ -48,11 +51,11 @@ public final class Obec implements Serializable {
     private static final long serialVersionUID = ObjectStreamClass.lookup(Obec.class).getSerialVersionUID();
 
     /**
-     * Validátory pro řetězce/celá čísla, používány k ověření platnosti řetězcových/celočíselných atributů
-     * třídy
+     * Konstanty reprezentující validátory pro řetězce/celá čísla jsou používány k ověření platnosti řetězcových/
+     * celočíselných atributů třídy
      */
-    private final Validator<String> validatorStringu = new TextValidator();
-    private final Validator<Integer> validatorIntegeru = new IntegerValidator();
+    private static final Validator<String> validatorStringu = new TextValidator();
+    private static final Validator<Integer> validatorIntegeru = new IntegerValidator();
 
 //<editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     private final int cisloKraje;
@@ -73,13 +76,13 @@ public final class Obec implements Serializable {
                 int pocetZen,
                 int celkem) throws ObecException {
         if (!validatorStringu.validuj(nazevKraje, nazevObce, psc))
-            throw new ObecException(ObecZprava.CHYBA_PRAZDNY_RETEZEC.zprava());
+            throw new ObecException(ObecZprava.PRAZDNY_RETEZEC.zprava());
 
         if (!validatorIntegeru.validuj(cisloKraje, pocetMuzu, pocetZen, celkem))
-            throw new ObecException(ObecZprava.CHYBA_ZAPORNA_HODNOTA.zprava());
+            throw new ObecException(ObecZprava.ZAPORNA_HODNOTA.zprava());
 
         if (!validujAtributCelkem(pocetMuzu, pocetZen, celkem))
-            throw new ObecException(ObecZprava.CHYBA_NEPLATNY_CELY_POCET.zprava());
+            throw new ObecException(ObecZprava.NEPLATNY_CELY_POCET.zprava());
 
         this.cisloKraje = cisloKraje;
         this.nazevKraje = nazevKraje;

@@ -1,5 +1,5 @@
 /**
- * Balíček {@code validatory} obsahuje implementace rozhraní {@link upce.cz.fei.bdats.validatory.Validator} pro
+ * Balíček {@code validatory} obsahuje implementace rozhraní {@link cz.upce.fei.bdats.validatory.Validator} pro
  * různé typy dat
  *
  * <p> Konkrétně je zde validační logika pro textové řetězce {@link java.lang.String} a celá čísla {@link java.lang.Integer}
@@ -9,4 +9,4 @@
  * @author amirov 11/24/2023
  * @version 1.1
  */
-package upce.cz.fei.bdats.validatory;
+package cz.upce.fei.bdats.validatory;

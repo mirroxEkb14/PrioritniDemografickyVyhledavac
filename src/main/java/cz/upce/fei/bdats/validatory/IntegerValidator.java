@@ -1,4 +1,4 @@
-package upce.cz.fei.bdats.validatory;
+package cz.upce.fei.bdats.validatory;
 
 /**
  * Třída implementuje {@link Validator} a poskytuje validaci pro celá čísla
@@ -8,7 +8,7 @@ package upce.cz.fei.bdats.validatory;
 public final class IntegerValidator implements Validator<Integer> {
 
     /** Konstanta pro dolní kladnou mez platných celých čísel */
-    private final int DOLNI_KLADNA_MEZ = 0;
+    private static final int DOLNI_KLADNA_MEZ = 0;
 
     @Override
     public boolean jeValidni(Integer vstup) {

@@ -10,4 +10,4 @@
  * @author amirov 11/23/2023
  * @version 1.1
  */
-package upce.cz.fei.bdats.vyjimky;
+package cz.upce.fei.bdats.vyjimky;

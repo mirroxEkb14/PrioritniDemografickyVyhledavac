@@ -1,4 +1,4 @@
-package upce.cz.fei.bdats.validatory;
+package cz.upce.fei.bdats.validatory;
 
 /**
  * Třída implementuje {@link Validator} a poskytuje validaci pro textové řetězce
