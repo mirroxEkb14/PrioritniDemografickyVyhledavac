@@ -9,7 +9,7 @@ import cz.upce.fei.bdats.vyjimky.zpravy.HeapZprava;
  * <p> Vystaví se, když:
  * <ul>
  * <li> Jsou vstupní data {@code null}
- * <li> Je prioritní fronta prázdný
+ * <li> Je prioritní fronta prázdná
  * <li> Je hodnota inicializační kapacity pole předaného do konstruktoru {@code null}
  * <li> Je hodnota vstupního porovnávacího kritéria «komparátor» {@code null}
  * </ul>
