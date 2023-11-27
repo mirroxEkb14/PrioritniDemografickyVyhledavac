@@ -167,9 +167,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: boolean jePrazdna()">
     @Override
-    public boolean jePrazdna() {
-        return false;
-    }
+    public boolean jePrazdna() { return mohutnost == NULA; }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: int mohutnost()">
@@ -373,91 +371,41 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     private void probublejDolu() {
         int indexAktualnihoUzlu = NULA;
 
-        while (!isLeaf(indexAktualnihoUzlu)) {
-            int leftChild = indexLevehoSyna(indexAktualnihoUzlu);
-            int rightChild = indexPravehoSyna(indexAktualnihoUzlu);
-            int nejlepsi = indexAktualnihoUzlu;
+        while (!jeListem(indexAktualnihoUzlu)) {
+            final int indexLevehoSyna = indexLevehoSyna(indexAktualnihoUzlu);
+            final int indexPravehoSyna = indexPravehoSyna(indexAktualnihoUzlu);
+            int indexNejvetsiho = indexAktualnihoUzlu;
 
-            if (leftChild < mohutnost() && komparator.compare((E) halda[leftChild], (E) halda[nejlepsi]) > 0) {
-                nejlepsi = leftChild;
-            }
+            if (indexLevehoSyna < mohutnost() &&
+                    komparator.compare((E) halda[indexLevehoSyna],
+                                       (E) halda[indexNejvetsiho]) > NULA)
+                indexNejvetsiho = indexLevehoSyna;
 
-            if (rightChild < mohutnost() && komparator.compare((E) halda[rightChild], (E) halda[nejlepsi]) > 0) {
-                nejlepsi = rightChild;
-            }
+            if (indexPravehoSyna < mohutnost() &&
+                    komparator.compare((E) halda[indexPravehoSyna],
+                                       (E) halda[indexNejvetsiho]) > NULA)
+                indexNejvetsiho = indexPravehoSyna;
 
-            if (nejlepsi != indexAktualnihoUzlu) {
-                vymen(indexAktualnihoUzlu, nejlepsi);
-                indexAktualnihoUzlu = nejlepsi;
+            if (indexNejvetsiho != indexAktualnihoUzlu) {
+                vymen(indexAktualnihoUzlu, indexNejvetsiho);
+                indexAktualnihoUzlu = indexNejvetsiho;
             } else {
                 break;
             }
         }
-
-//        while (jeLevySyn(indexAktualnihoUzlu)) {
-//            int indexNejmensihoSyna = indexLevehoSyna(indexAktualnihoUzlu);
-//            final int vztahSynu = komparator.compare(pravySyn(indexAktualnihoUzlu),
-//                                                     levySyn(indexAktualnihoUzlu));
-//            if (jePravySyn(indexAktualnihoUzlu) && vztahSynu < NULA)
-//                indexNejmensihoSyna = indexPravehoSyna(indexAktualnihoUzlu);
-//
-//            final int vztahPredka = komparator.compare((E) halda[indexAktualnihoUzlu],
-//                                                       (E) halda[indexNejmensihoSyna]);
-//            if (vztahPredka < NULA) {
-//                vymen(indexAktualnihoUzlu, indexNejmensihoSyna);
-//            } else {
-//                break;
-//            }
-//            indexAktualnihoUzlu = indexNejmensihoSyna;
-//        }
-    }
-
-    private boolean isLeaf(int pos)
-    {
-        return pos > (mohutnost / 2) && pos <= mohutnost;
     }
 
     /**
-     * Nalezne pozice největšího syna dané pozice v kontextu binární haldy
+     * Zkontroluje, zda je prvek na požadované pozici listem (tj. nemá žádné potomky)
      *
-     * <p> Popis jednotlivých bloků kódu:
-     * <ol>
-     * <li> <b>if(indexLevehoSyna < mohutnost() && vztahSLevymSynem > 0)</b>:
-     *      <ul>
-     *      <li> Porovnává prioritu levého syna s prioritou aktuální pozice
-     *      </ul>
-     * <li> <b>if(indexPravehoSyna < mohutnost() && vztahSPravymSynem > 0)</b>:
-     *      <ul>
-     *      <li> Porovnává prioritu pravého syna s prioritou:
-     *          <ol>
-     *          <li> buď: aktuální pozice
-     *          <li> nebo: levého syna (pokud již prohodila)
-     *          </ol>
-     *      </ul>
-     * </ol>
+     * @param poz Index prvku pro kontrolu
      *
-     * @param pozPredka Index aktuálního uzlu v poli, pro nějž hledá největšího (z hlediska priority) syna
-     *
-     * @return Index syna s nejvyšší prioritou (tj. v souladu s porovnávacím komparátorem)
+     * @return {@code true} pokud je uzel na dané pozici listem, jinak {@code false}
      *
      * @see AbstrHeap#probublejDolu()
      */
-    private int najdiNejlepsihoSyna(int pozPredka) {
-        int indexLevehoSyna = indexLevehoSyna(pozPredka);
-        int indexPravehoSyna = indexPravehoSyna(pozPredka);
-        int indexNejlepsihoSyna = pozPredka;
-
-        final int vztahSLevymSynem = komparator.compare((E) halda[indexLevehoSyna],
-                                                        (E) halda[indexNejlepsihoSyna]);
-        if (indexLevehoSyna < mohutnost() && vztahSLevymSynem > NULA)
-            indexNejlepsihoSyna = indexLevehoSyna;
-
-        final int vztahSPravymSynem = komparator.compare((E) halda[indexPravehoSyna],
-                                                         (E) halda[indexNejlepsihoSyna]);
-        if (indexPravehoSyna < mohutnost() && vztahSPravymSynem > NULA)
-            indexNejlepsihoSyna = indexPravehoSyna;
-
-        return indexNejlepsihoSyna;
+    private boolean jeListem(int poz) {
+        return poz > (mohutnost / 2) && poz <= mohutnost;
     }
 
     /**
