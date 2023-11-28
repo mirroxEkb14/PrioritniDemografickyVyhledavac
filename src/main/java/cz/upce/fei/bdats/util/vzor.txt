@@ -1,0 +1,22 @@
+
+1) indexovaná anglická abeceda:
+   a, b, c, d, e, f, g, h, i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  v,  w,  x,  y,  z
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+
+2) posloupnost přidání (počty obyvatel):                3) posloupnost přidání (názvy obcí):
+   i, g, e, h, c, f, a, d, n, t, s, q, u                   i, g, e, h, c, f, a, d, n, t, s, q, u
+
+            i                                                       i
+           / \                                                     / \
+          g   n                                                   g   n
+         / \   \                                                 / \   \
+        e   h   t                                               e   h   t
+       / \     / \                                             / \     / \
+      c   f   s   u                                           c   f   s   u
+     / \     /                                               / \     /
+    a   d   q                                               a   d   q
+
+2.1. posloupnost výpisu do šířky:                       3.1. posloupnost výpisu do šířky:
+     i, g, n, e, h, t, c, f, s, u, a, d, q                   i, g, n, e, h, t, c, f, s, u, a, d, q
+2.2. posloupnost výpisu do hloubky (in-order):          3.2. posloupnost výpisu do hloubky (in-order):
+     a, c, d, e, f, g, h, i, n, q, s, t, u                   a, c, d, e, f, g, h, i, n, q, s, t, u

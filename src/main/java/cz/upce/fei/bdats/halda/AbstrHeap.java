@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
  * @param <E> Generický parametr reprezentující budoucí datový typ prvků prioritní fronty, které musí být
  *        porovnatelné podle určité priority
  */
-public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
+public final class AbstrHeap<E> implements IAbstrHeap<E> {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     /**
@@ -376,7 +376,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když je pole prvků roveno {@code null}, anebo nemá žádné prvky
      *
-     * @see AbstrHeap#vybuduj(Comparable[])
+     * @see AbstrHeap#vybuduj(Object[])
      */
     private void pozadatNeprazdnePole(E[] pole) throws HeapException {
         if (pole == null || pole.length == 0)
@@ -391,7 +391,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když je vstupní prvek {@code null}
      *
-     * @see AbstrHeap#vloz(Comparable)
+     * @see AbstrHeap#vloz(Object)
      */
     private void pozadatNeprazdnyPrvek(E prvek) throws HeapException {
         if (prvek == null)
@@ -471,7 +471,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když je alespoň jedno pole {@code null}
      *
-     * @see AbstrHeap#zkopirujPole(Comparable[], Comparable[])
+     * @see AbstrHeap#zkopirujPole(Object[], Object[])
      */
     private void pozadatNePrazdnaPole(E[] src, E[] dest) throws HeapException {
         if (src == null || dest == null)
@@ -487,7 +487,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když délky obou polí nejsou stejné
      *
-     * @see AbstrHeap#zkopirujPole(Comparable[], Comparable[])
+     * @see AbstrHeap#zkopirujPole(Object[], Object[])
      */
     private void pozadatStejnouDelkuPole(E @NotNull [] src, E @NotNull [] dest) throws HeapException {
         if (src.length != dest.length)
@@ -501,7 +501,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * Probublá prvek (právě vložený na konec haldy) nahoru tak dlouho, dokud není splněno haldové uspořádání,
      * tzn. předek má větší nebo rovnou prioritu vůči svým potomkům <i>(eng. bubbleUp/heapifyUp/siftUp)</i>
      *
-     * @see AbstrHeap#vloz(Comparable)
+     * @see AbstrHeap#vloz(Object)
      */
     private void probublejNahoru() {
         int aktualniIndex = mohutnost - 1;

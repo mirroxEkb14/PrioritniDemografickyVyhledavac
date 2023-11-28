@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 /**
  * Testovací případy pro:
  * <ol>
- * <li> <b>test_01_</b>: Scénáře metody {@link AbstrHeap#vybuduj(Comparable[])}
+ * <li> <b>test_01_</b>: Scénáře metody {@link AbstrHeap#vybuduj(Object[])}
  * <li> <b>test_02_</b>: Scénáře metody {@link AbstrHeap#reorganizuj(Comparator)}
- * <li> <b>test_03_</b>: Scénáře metody {@link AbstrHeap#vloz(Comparable)}
+ * <li> <b>test_03_</b>: Scénáře metody {@link AbstrHeap#vloz(Object)}
  * <li> <b>test_04_</b>: Scénáře metody {@link AbstrHeap#odeberMax()}
  * <li> <b>test_05_</b>: Scénáře metody {@link AbstrHeap#zpristupniMax()}
  * <li> <b>test_06_</b>: Scénáře metody {@link AbstrHeap#vypis(ETypProhl)}

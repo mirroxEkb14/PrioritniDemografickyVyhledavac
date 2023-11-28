@@ -20,7 +20,7 @@ import java.util.PriorityQueue;
  *
  * @param <E> Typ prvků prioritní fronty, které musí být porovnatelné podle určité priority
  */
-public interface IAbstrHeap<E extends Comparable<E>> {
+public interface IAbstrHeap<E> {
 
     /**
      * Vybuduje požadovanou prioritní frontu podle vstupního pole
