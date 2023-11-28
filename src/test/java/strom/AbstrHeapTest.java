@@ -86,7 +86,7 @@ public final class AbstrHeapTest {
      * <p> Motivační obrázky:
      * <ul>
      * <li> Neupořádaná halda: [5, 2, 9, 1, 7]
-     * <li> Uspořádaná halda: [9, 7, 5, 2, 1]
+     * <li> Uspořádaná halda: [9, 7, 5, 1, 2]
      *          9
      *        /   \
      *       7     5
@@ -396,11 +396,87 @@ public final class AbstrHeapTest {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="vypis(ETypProhl)">
+    private final Integer[] pole = new Integer[]{5, 2, 6, 1, 3, 4, 7};
+
+    /**
+     * Testuje iterátory do šířky/hloubky (in-order)
+     *
+     * <p> Reprezentace haldy:
+     * <ol>
+     * <li> Neupořádaná halda: [5, 2, 6, 1, 3, 4, 7]
+     * <li> Uspořádaná halda: [7, 3, 6, 1, 2, 4, 5]
+     * <li> Motivační obrázek:
+     *             7
+     *           /   \
+     *          3     6
+     *         / \   / \
+     *        1   2 4   5
+     * <li> Do šířky: 7, 3, 6, 1, 2, 4, 5
+     * <li> Do hloubky (in-order): 1, 3, 2, 7, 4, 6, 5
+     * <li> Vztahy:
+     *      <ol>
+     *      <li> Potomci {@code 7}:
+     *          <ul>
+     *          <li> Levý syn = 3, protože 2 * 0 + 1 = 1 (tj. index)
+     *          <li> Pravý syn = 6, protože 2 * 0 + 2 = 2 (tj. index)
+     *          </ul>
+     *      <li> Potomci {@code 3}:
+     *          <ul>
+     *          <li> Levý syn = 1, protože 2 * 1 + 1 = 3 (tj. index)
+     *          <li> Pravý syn = 2, protože 2 * 1 + 2 = 4 (tj. index)
+     *          </ul>
+     *      <li> Potomci {@code 6}:
+     *          <ul>
+     *          <li> Levý syn = 4, protože 2 * 2 + 1 = 5 (tj. index)
+     *          <li> Pravý syn = 5, protože 2 * 2 + 2 = 6 (tj. index)
+     *          </ul>
+     *      </ol>
+     * </ol>
+     */
     @Test
     public void test_06_01_vypis() {
         try {
-            intHalda.vybuduj(new Integer[]{6, 5, 4, 3, 2, 1});
-            System.out.println(intHalda.vypis(ETypProhl.HLOUBKA));
+            intHalda.vybuduj(pole); // -> [7, 3, 6, 1, 2, 4, 5]
+
+            final int expMosutnost = 7;
+            final int resMosutnost = intHalda.mohutnost();
+            assertEquals(expMosutnost, resMosutnost);
+
+            final String expSirka = "7, 3, 6, 1, 2, 4, 5";
+            final String resSirka = intHalda.vypis(ETypProhl.SIRKA);
+            assertEquals(expSirka, resSirka); // -> "7, 3, 6, 1, 2, 4, 5"
+
+            final String expHloubka = "1, 3, 2, 7, 4, 6, 5";
+            final String resHloubka = intHalda.vypis(ETypProhl.HLOUBKA);
+            assertEquals(expHloubka, resHloubka); // -> "1, 3, 2, 7, 4, 6, 5"
+
+            final int expected1 = 7;
+            final int result1 = intHalda.odeberMax();
+            assertEquals(expected1, result1);
+
+            final int expected2 = 6;
+            final int result2 = intHalda.odeberMax();
+            assertEquals(expected2, result2);
+
+            final int expected3 = 5;
+            final int result3 = intHalda.odeberMax();
+            assertEquals(expected3, result3);
+
+            final int expected4 = 4;
+            final int result4 = intHalda.odeberMax();
+            assertEquals(expected4, result4);
+
+            final int expected5 = 3;
+            final int result5 = intHalda.odeberMax();
+            assertEquals(expected5, result5);
+
+            final int expected6 = 2;
+            final int result6 = intHalda.odeberMax();
+            assertEquals(expected6, result6);
+
+            final int expected7 = 1;
+            final int result7 = intHalda.odeberMax();
+            assertEquals(expected7, result7);
         } catch (HeapException ex) {
             fail();
         }

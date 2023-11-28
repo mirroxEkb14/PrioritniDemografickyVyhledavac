@@ -1,13 +1,21 @@
 package cz.upce.fei.bdats.halda;
 
+import cz.upce.fei.bdats.sekvence.fifo.AbstrFifo;
+import cz.upce.fei.bdats.sekvence.fifo.IAbstrFifo;
+import cz.upce.fei.bdats.sekvence.lifo.AbstrLifo;
+import cz.upce.fei.bdats.sekvence.lifo.IAbstrLifo;
 import cz.upce.fei.bdats.strom.ETypProhl;
+import cz.upce.fei.bdats.vyjimky.FifoException;
+import cz.upce.fei.bdats.vyjimky.LifoException;
+import cz.upce.fei.bdats.vyjimky.zpravy.FifoZprava;
 import cz.upce.fei.bdats.vyjimky.zpravy.HeapZprava;
 import cz.upce.fei.bdats.vyjimky.HeapException;
+import cz.upce.fei.bdats.vyjimky.zpravy.LifoZprava;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Třída implementuje sadu základních operací abstraktní datové strultury <i>(ADS)</i> <b>prioritní fronta</b>
@@ -19,7 +27,7 @@ import java.util.PriorityQueue;
  *
  * <p> Implementuje rozhraní {@link IAbstrHeap}
  *
- * @see PriorityQueue
+ * @see java.util.PriorityQueue
  *
  * @param <E> Generický parametr reprezentující budoucí datový typ prvků prioritní fronty, které musí být
  *        porovnatelné podle určité priority
@@ -208,12 +216,159 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
         pozadatNeprazdnyTyp(typ);
 
         final StringBuilder sb = new StringBuilder();
-
+        final Iterator<E> iterator = switch (typ) {
+            case SIRKA -> new SirkaIterator();
+            case HLOUBKA -> new HloubkaIterator();
+        };
+        while (iterator.hasNext()) {
+            final E prvek = iterator.next();
+            sb.append(prvek).append(", ");
+        }
+        sb.replace(sb.length() - 2,
+                sb.length(),
+                "");
         return sb.toString();
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Privátní Metody: Dotaz na null/prázdnost">
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída: Iterátor do šířky (BFS)">
+    /**
+     * Strategie <b>Breadth-First Traversal</b>/<b>Level-Order Traversal</b> prochází stromové/hierarchické struktury
+     * postupně na jedné úrovni před tím, než se přesune na další úroveň
+     *
+     * <p> V kontextu <u>binární haldy</u> implementované na poli to znamená, že začne u kořene (index 0) a postupně
+     * prochází všechny jeho potomky, až se dostane na další úroveň
+     *
+     * <p> Používá pomocnou datovou strukturu <u>fronta</u> <i>(eng. Queue)</i> uchovávající indexy prvků, jež zatím
+     * nebyly zpracovány
+     */
+    private class SirkaIterator implements Iterator<E> {
+
+        /**
+         * Instanční proměnná uchovává indexy prvků haldy
+         */
+        private final IAbstrFifo<Integer> frontaIndexu;
+
+        /**
+         * Konstruktor inicializuje frontu a vloží index kořene {@code (0)} na konec fronty
+         */
+        public SirkaIterator() {
+            this.frontaIndexu = new AbstrFifo<>();
+            try {
+                frontaIndexu.vlozNaKonec(0);
+            } catch (FifoException ignored) {}
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !frontaIndexu.jePrazdna();
+        }
+
+        /**
+         * Odebere prvek a vrátí z přední části fronty (korespondující s aktuálním prvkem) a získá index levého a
+         * pravého syna tohoto prvku, jež vloží na konec fronty (pokud synové existují)
+         *
+         * @return Následující prvek v rámci iterace do šířky
+         */
+        @Override
+        public E next() {
+            if (!hasNext())
+                throw new NoSuchElementException(
+                        FifoZprava.PRAZDNA_FRONTA.zprava());
+            try {
+                final int aktualniIndex = frontaIndexu.odeberZeZacatku();
+                final E aktualniPrvek = (E) halda[aktualniIndex];
+
+                int indexLevehoSyna = indexLevehoSyna(aktualniIndex);
+                if (indexLevehoSyna < mohutnost())
+                    frontaIndexu.vlozNaKonec(indexLevehoSyna);
+
+                final int indexPravehoSyna = indexPravehoSyna(aktualniIndex);
+                if (indexPravehoSyna < mohutnost()) {
+                    frontaIndexu.vlozNaKonec(indexPravehoSyna);
+                }
+                return aktualniPrvek;
+            } catch (FifoException ex) {
+                throw new NoSuchElementException();
+            }
+        }
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída: Iterátor do hloubky, in-order (DFS)">
+    /**
+     * Taktika <b>in-order Depth-First Traversal</b> v kontextu <u>binární haldy</u>/<u>prioritní fronty</u>
+     * (kde platí pravidlo, že každý uzel má nejvýše dva syny) znamená, že postupně prochází levým synem až do konce,
+     * poté navštíví uzel a nakonec přejdeme na pravého syna (tzn. nejdříve navštíví levý podstrom, poté kořen a
+     * nakonec pravý podstrom)
+     *
+     * <p> Pro implementaci strategie je využitá pomocná datová struktura <u>zásobník</u> <i>(eng. Stack)</i> zejména
+     * jako výstupní soustava, tzn. udržuje aktuální stav průchod a následující kroky
+     */
+    private class HloubkaIterator implements Iterator<E> {
+
+        /**
+         * Instanční proměnná udržuje indexy prvků prioritní haldy
+         */
+        private final IAbstrLifo<Integer> zasobnikIndexu;
+
+        /**
+         * Konstruktor inicializuje zásobník a přidává kořenový uzel do zásobníku
+         */
+        public HloubkaIterator() {
+            this.zasobnikIndexu = new AbstrLifo<>();
+            pridejDoZasobniku(0);
+        }
+
+        /**
+         * Přidává uzly od daného indexu směrem vlevo do zásobníku
+         *
+         * @param index Index, od něhož se začne postup
+         *
+         * @see AbstrHeap#indexLevehoSyna(int)
+         */
+        private void pridejDoZasobniku(int index) {
+            try {
+                while (index < mohutnost()) {
+                    zasobnikIndexu.vlozNaZacatek(index);
+                    index = indexLevehoSyna(index);
+                }
+            } catch (LifoException ignored) {}
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !zasobnikIndexu.jePrazdny();
+        }
+
+        /**
+         * Odebere index z vrcholu zásobníku a vrací příslušný prvek z haldy. Pak přidá do zásobníku pravého syna
+         * odebraného uzlu (pokud existuje) a jeho levé syny
+         *
+         * @return Následující prvek v rámci průchodu do hloubky
+         */
+        @Override
+        public E next() {
+            if (!hasNext())
+                throw new NoSuchElementException(
+                        LifoZprava.PRAZDNY_ZASOBNIK.zprava());
+            try {
+                final int aktualniIndex = zasobnikIndexu.odeberZeZacatku();
+                final E aktualniPrvek = (E) halda[aktualniIndex];
+
+                final int pravyIndex = indexPravehoSyna(aktualniIndex);
+                if (pravyIndex < mohutnost())
+                    pridejDoZasobniku(pravyIndex);
+                return aktualniPrvek;
+            } catch (LifoException ex) {
+                throw new NoSuchElementException(
+                        LifoZprava.PRAZDNY_ZASOBNIK.zprava());
+            }
+        }
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Privátní Metody: Dotazy typu pozadat()">
     /**
      * Zkontroluje, zda vstupní pole reprezentující haldu je prázdné
      *
