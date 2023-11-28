@@ -2,9 +2,10 @@ package cz.upce.fei.bdats.halda;
 
 import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.zpravy.HeapZprava;
-import org.jetbrains.annotations.NotNull;
 import cz.upce.fei.bdats.vyjimky.HeapException;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -25,19 +26,11 @@ import java.util.PriorityQueue;
  */
 public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
 
-// <editor-fold defaultstate="collapsed" desc="Konstanty">
-    /**
-     * Konstanty označující určitá celá čísla pro kontroly, aby se třída vyhnula magickým číslem v kódu
-     */
-    private static final int NULA = 0;
-    private static final int JEDNICKA = 1;
-// </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     /**
      * Kritérium porovnávání prvků (tj. priorita)
      */
-    private final Comparator<E> komparator;
+    private Comparator<E> komparator;
     /**
      * Pole pro ukládání prvků haldy
      */
@@ -45,7 +38,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     /**
      * Maximální možná velikost haldy
      */
-    private final int kapacita;
+    private int kapacita;
     /**
      * Aktuální velikost haldy (tj. počet prvků)
      */
@@ -66,7 +59,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
         this.komparator = komp;
         this.halda = new Object[kapacita];
         this.kapacita = kapacita;
-        this.mohutnost = NULA;
+        this.mohutnost = 0;
     }
 
     public AbstrHeap(Comparator<E> komp) throws HeapException {
@@ -79,95 +72,43 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     public void vybuduj(E[] pole) throws HeapException {
         pozadatNeprazdnePole(pole);
 
-        final int delkaPole = pole.length;
-        final int pulka = delkaPole / 2 - 1;
-        for (int i = pulka; i >= NULA; i--) {
-            int aktualniIndex = i;
-            while (aktualniIndex < delkaPole / 2) {
-                final int indexLevehoSyna = indexLevehoSyna(aktualniIndex);
-                final int indexPravehoSyna = indexPravehoSyna(aktualniIndex);
+        this.halda = new Object[pole.length];
+        this.kapacita = pole.length;
+        this.mohutnost = pole.length;
 
-                int nejlepsiIndex = aktualniIndex;
-                if (jeLevySynLepsi(indexLevehoSyna, pole, nejlepsiIndex))
-                    nejlepsiIndex = indexLevehoSyna;
-                if (jePravySynLepsi(indexPravehoSyna, pole, nejlepsiIndex))
-                    nejlepsiIndex = indexPravehoSyna;
+        System.arraycopy(pole, 0, halda, 0, pole.length);
 
-                if (nejsouStejneIndexy(nejlepsiIndex, aktualniIndex)) {
-                    final E docasna = pole[aktualniIndex];
-                    pole[aktualniIndex] = pole[nejlepsiIndex];
-                    pole[nejlepsiIndex] = docasna;
-                    aktualniIndex = nejlepsiIndex;
-                } else {
-                    break;
-                }
-            }
+        final int pulka = pole.length / 2;
+        for (int i = pulka - 1; i >= 0; i--) {
+            probublejPulku(i, pulka);
         }
-    }
-
-    /**
-     * Zkontroluje, zda levý potomek existuje a má větší prioritu
-     *
-     * @param indexLevehoSyna Index levého potomka
-     * @param pole Pole prvků reprezentujících haldu
-     * @param nejlepsiIndex Index prvku s nejlepší prioritou
-     *
-     * @return {@code true}, pokud levý potomek existuje a má větší prioritu, jinak {@code false}
-     */
-    private boolean jeLevySynLepsi(int indexLevehoSyna,
-                                   E @NotNull [] pole,
-                                   int nejlepsiIndex) {
-        return indexLevehoSyna < pole.length &&
-                pole[indexLevehoSyna].compareTo(pole[nejlepsiIndex]) > NULA;
-    }
-
-    /**
-     * Zkontroluje, zda pravý potomek existuje a má větší prioritu
-     *
-     * @param indexPravehoSyna Index pravého potomka
-     * @param pole Pole prvků reprezentujících haldu
-     * @param nejlepsiIndex Index prvku s nejlepší prioritou
-     *
-     * @return {@code true}, pokud pravý potomek existuje a má větší prioritu, jinak {@code false}
-     */
-    private boolean jePravySynLepsi(int indexPravehoSyna,
-                                    E @NotNull [] pole,
-                                    int nejlepsiIndex) {
-        return indexPravehoSyna < pole.length &&
-                pole[indexPravehoSyna].compareTo(pole[nejlepsiIndex]) > NULA;
-    }
-
-    /**
-     * Zkontroluje, zda indexy nejlepšího a aktuálního prvku nejsou stejné
-     *
-     * @param nejlepsiIndex Index prvku s nejlepší prioritou
-     * @param aktualniIndex Aktuální index prvku
-     *
-     * @return {@code true}, pokud indexy nejsou stejné, jinak {@code false}
-     */
-    private boolean nejsouStejneIndexy(int nejlepsiIndex,
-                                       int aktualniIndex) {
-        return nejlepsiIndex != aktualniIndex;
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: void reorganizuj(Comparator<E> comp)">
     @Override
     public void reorganizuj(Comparator<E> komp) throws HeapException {
+        pozadatNePrazdnyKomparator(komp);
 
+        final E[] kopieHaldy = (E[]) new Comparable[mohutnost];
+        System.arraycopy(halda, 0, kopieHaldy, 0, kopieHaldy.length);
+
+        this.komparator = komp;
+        vybuduj(kopieHaldy);
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: void zrus()">
     @Override
     public void zrus() {
-
+        halda = new Object[kapacita];
+        mohutnost = 0;
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: boolean jePrazdna()">
     @Override
-    public boolean jePrazdna() { return mohutnost == NULA; }
+    public boolean jePrazdna() { return mohutnost == 0; }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: int mohutnost()">
@@ -176,8 +117,6 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: void vloz(E prvek)">
-    private static final int CINITEL_KAPACITY = 2;
-
     /**
      * Vloží prvek do haldy a zajistí udržení haldového uspořádaní
      *
@@ -220,9 +159,9 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      */
     private void zabezpecKapacitu() {
         if (mohutnost == kapacita) {
-            int novaKapacita = halda.length * CINITEL_KAPACITY;
+            int novaKapacita = halda.length * 2;
             Object[] novaHalda = new Object[novaKapacita];
-            System.arraycopy(halda, NULA, novaHalda, NULA, mohutnost);
+            System.arraycopy(halda, 0, novaHalda, 0, mohutnost);
             halda = novaHalda;
         }
     }
@@ -247,8 +186,8 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     public E odeberMax() throws HeapException {
         pozadatNePrazdnouHaldu();
 
-        final E maxPrvek = (E) halda[NULA];
-        halda[NULA] = halda[--mohutnost];
+        final E maxPrvek = (E) halda[0];
+        halda[0] = halda[--mohutnost];
         probublejDolu();
 
         return maxPrvek;
@@ -259,14 +198,18 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     @Override
     public E zpristupniMax() throws HeapException {
         pozadatNePrazdnouHaldu();
-        return (E) halda[NULA];
+        return (E) halda[0];
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: String vypis()">
     @Override
-    public String vypis(ETypProhl typ) {
-        return null;
+    public @NotNull String vypis(ETypProhl typ) throws HeapException {
+        pozadatNeprazdnyTyp(typ);
+
+        final StringBuilder sb = new StringBuilder();
+
+        return sb.toString();
     }
 // </editor-fold>
 
@@ -281,7 +224,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @see AbstrHeap#vybuduj(Comparable[])
      */
     private void pozadatNeprazdnePole(E[] pole) throws HeapException {
-        if (pole == null || pole.length == NULA)
+        if (pole == null || pole.length == 0)
             throw new HeapException(
                     HeapZprava.PRAZDNE_POLE.zprava());
     }
@@ -302,6 +245,25 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     }
 
     /**
+     * Zkontroluje, zda vstupní typ pro prohlížení haldy je {@code null}:
+     * <ol>
+     * <li> Do šířky <i>(eng. Breadth-First Search - BFS)</i>
+     * <li> Do hloubky, <b>in-order</b> <i>(eng. Depth-First Search - DFS)</i>
+     * </ol>
+     *
+     * @param typ Typ prohlížení
+     *
+     * @throws HeapException Když je vstupní typ {@code null}
+     *
+     * @see AbstrHeap#vypis(ETypProhl)
+     */
+    private void pozadatNeprazdnyTyp(ETypProhl typ) throws HeapException {
+        if (typ == null)
+            throw new HeapException(
+                    HeapZprava.PRAZDNY_PRVEK.zprava());
+    }
+
+    /**
      * Zkontroluje, zda vstupní inicializační kapacita větší než {@code 0}
      *
      * @param kapacita Inicializační kapacita vstupující do konstruktoru třídy
@@ -311,7 +273,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @see AbstrHeap#AbstrHeap(int, Comparator)
      */
     private void pozadatPlatnouKapacitu(int kapacita) throws HeapException {
-        if (kapacita < JEDNICKA)
+        if (kapacita < 1)
             throw new HeapException(
                     HeapZprava.NULL_INICIALIZACNI_KAPACITA.zprava());
     }
@@ -324,6 +286,7 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @throws HeapException Když je vstupní komparátor {@code null}
      *
      * @see AbstrHeap#AbstrHeap(int, Comparator)
+     * @see AbstrHeap#reorganizuj(Comparator)
      */
     private void pozadatNePrazdnyKomparator(Comparator<E> komp) throws HeapException {
         if (komp == null)
@@ -337,11 +300,44 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @throws HeapException Když je halda prázdná
      *
      * @see AbstrHeap#odeberMax()
+     * @see AbstrHeap#zpristupniMax()
      */
     private void pozadatNePrazdnouHaldu() throws HeapException {
         if (jePrazdna())
             throw new HeapException(
                     HeapZprava.PRAZDNA_HALDA.zprava());
+    }
+
+    /**
+     * Zkontroluje, zda je alespoň jedno pole {@code null}
+     *
+     * @param src Zdrojové pole
+     * @param dest Cílové pole
+     *
+     * @throws HeapException Když je alespoň jedno pole {@code null}
+     *
+     * @see AbstrHeap#zkopirujPole(Comparable[], Comparable[])
+     */
+    private void pozadatNePrazdnaPole(E[] src, E[] dest) throws HeapException {
+        if (src == null || dest == null)
+            throw new HeapException(
+                    HeapZprava.KOPIROVANI_POLE_NULL.zprava());
+    }
+
+    /**
+     * Zkontroluje, zda délky vstupních polí jsou stejné
+     *
+     * @param src Zdrojové pole
+     * @param dest Cílové pole
+     *
+     * @throws HeapException Když délky obou polí nejsou stejné
+     *
+     * @see AbstrHeap#zkopirujPole(Comparable[], Comparable[])
+     */
+    private void pozadatStejnouDelkuPole(E @NotNull [] src, E @NotNull [] dest) throws HeapException {
+        if (src.length != dest.length)
+            throw new HeapException(
+                    HeapZprava.KOPIROVANI_POLE_DELKA.zprava());
     }
 // </editor-fold>
 
@@ -353,10 +349,10 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @see AbstrHeap#vloz(Comparable)
      */
     private void probublejNahoru() {
-        int aktualniIndex = mohutnost - JEDNICKA;
+        int aktualniIndex = mohutnost - 1;
         while (jePredek(aktualniIndex) &&
                 komparator.compare(predek(aktualniIndex),
-                                   (E) halda[aktualniIndex]) < NULA) {
+                                   (E) halda[aktualniIndex]) < 0) {
             vymen(indexPredka(aktualniIndex), aktualniIndex);
             aktualniIndex = indexPredka(aktualniIndex);
         }
@@ -369,26 +365,26 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
      * @see AbstrHeap#odeberMax()
      */
     private void probublejDolu() {
-        int indexAktualnihoUzlu = NULA;
+        int aktualniIndex = 0;
 
-        while (!jeListem(indexAktualnihoUzlu)) {
-            final int indexLevehoSyna = indexLevehoSyna(indexAktualnihoUzlu);
-            final int indexPravehoSyna = indexPravehoSyna(indexAktualnihoUzlu);
-            int indexNejvetsiho = indexAktualnihoUzlu;
+        while (!jeListem(aktualniIndex)) {
+            final int levyIndex = indexLevehoSyna(aktualniIndex);
+            final int pravyIndex = indexPravehoSyna(aktualniIndex);
+            int nejvetsiIndex = aktualniIndex;
 
-            if (indexLevehoSyna < mohutnost() &&
-                    komparator.compare((E) halda[indexLevehoSyna],
-                                       (E) halda[indexNejvetsiho]) > NULA)
-                indexNejvetsiho = indexLevehoSyna;
+            if (levyIndex < mohutnost() &&
+                    komparator.compare((E) halda[levyIndex],
+                                       (E) halda[nejvetsiIndex]) > 0)
+                nejvetsiIndex = levyIndex;
 
-            if (indexPravehoSyna < mohutnost() &&
-                    komparator.compare((E) halda[indexPravehoSyna],
-                                       (E) halda[indexNejvetsiho]) > NULA)
-                indexNejvetsiho = indexPravehoSyna;
+            if (pravyIndex < mohutnost() &&
+                    komparator.compare((E) halda[pravyIndex],
+                                       (E) halda[nejvetsiIndex]) > 0)
+                nejvetsiIndex = pravyIndex;
 
-            if (indexNejvetsiho != indexAktualnihoUzlu) {
-                vymen(indexAktualnihoUzlu, indexNejvetsiho);
-                indexAktualnihoUzlu = indexNejvetsiho;
+            if (nejvetsiIndex != aktualniIndex) {
+                vymen(aktualniIndex, nejvetsiIndex);
+                aktualniIndex = nejvetsiIndex;
             } else {
                 break;
             }
@@ -396,7 +392,47 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
     }
 
     /**
-     * Zkontroluje, zda je prvek na požadované pozici listem (tj. nemá žádné potomky)
+     * Probublá prvky od půlky pole na začátek
+     *
+     * @param aktualniIndex Pozice prvku (od půlky do začátku pole)
+     * @param delkaPulky Délka poloviny pole
+     */
+    private void probublejPulku(int aktualniIndex, int delkaPulky) {
+        while (aktualniIndex < delkaPulky) {
+            final int levyIndex = indexLevehoSyna(aktualniIndex);
+            final int pravyIndex = indexPravehoSyna(aktualniIndex);
+            int nejvetsiIndex = aktualniIndex;
+
+            if (levyIndex <= (mohutnost - 1) &&
+                    komparator.compare((E) halda[levyIndex],
+                                       (E) halda[nejvetsiIndex]) > 0)
+                nejvetsiIndex = levyIndex;
+
+            if (pravyIndex <= (mohutnost - 1) &&
+                    komparator.compare((E) halda[pravyIndex],
+                                       (E) halda[nejvetsiIndex]) > 0)
+                nejvetsiIndex = pravyIndex;
+
+            if (nejvetsiIndex != aktualniIndex) {
+                vymen(aktualniIndex, nejvetsiIndex);
+                aktualniIndex = nejvetsiIndex;
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Zkontroluje, zda je prvek na požadované pozici listem (tzn. nemá žádné potomky)
+     *
+     * <p> Popis logiky:
+     * <ul>
+     * <li> <b>poz > (mohutnost / 2)</b>: Zkontroluje, zda je pozice uzlu větší než polovina aktuální mohutnosti.
+     * Horní polovina > <b>mohutnost / 2</b>
+     * <li> <b>poz <= mohutnost</b>: Zkontroluje, zda pozice uzlu nepřesahuje aktuální velikost haldy
+     * </ul>
+     *
+     * <p> <b>Poznámka</b>: Listy v haldě jsou všechny uzly, jež se nacházejí v dolní polovině haldy
      *
      * @param poz Index prvku pro kontrolu
      *
@@ -484,6 +520,27 @@ public final class AbstrHeap<E extends Comparable<E>> implements IAbstrHeap<E> {
 
     private boolean jePredek(int indexSyna) {
         return indexPredka(indexSyna) >= 0;
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Privátní Metody: Kopírování pole">
+    /**
+     * Zkopíruje prvky ze zdrojového <i>(source)</i> pole do cílového <i>(destination)</i> pole
+     *
+     * <p> <b>Poznámka</b>: Dalo by se použit {@link System#arraycopy(Object, int, Object, int, int)}
+     *
+     * @param zdrojove Zdrojové pole, z nějož se mají kopírovat prvky
+     * @param cilove Cílové pole, do něhož se mají kopírovat prvky
+     *
+     * @throws HeapException Když jsou zdrojové a/nebo cílové pole prázdné, nebo mají různou délku
+     */
+    private void zkopirujPole(E[] zdrojove, E[] cilove) throws HeapException {
+        pozadatNePrazdnaPole(zdrojove, cilove);
+        pozadatStejnouDelkuPole(zdrojove, cilove);
+
+        for (int i = 0; i < zdrojove.length; i++) {
+            cilove[i] = zdrojove[i];
+        }
     }
 // </editor-fold>
 }

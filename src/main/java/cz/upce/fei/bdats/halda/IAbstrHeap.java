@@ -104,6 +104,8 @@ public interface IAbstrHeap<E extends Comparable<E>> {
      * @param typ Typ prohlížení pro iterátor
      *
      * @return Textový řetězec popisující strukturu prioritní fronty podle požadovaného typu
+     *
+     * @throws HeapException Když jsou vstupní data {@code null}
      */
-    String vypis(ETypProhl typ);
+    String vypis(ETypProhl typ) throws HeapException;
 }

@@ -12,6 +12,8 @@ import cz.upce.fei.bdats.vyjimky.zpravy.HeapZprava;
  * <li> Je prioritní fronta prázdná
  * <li> Je hodnota inicializační kapacity pole předaného do konstruktoru {@code null}
  * <li> Je hodnota vstupního porovnávacího kritéria «komparátor» {@code null}
+ * <li> Jsou zdrojové a/nebo cílové pole prázdná (při kopírování pole)
+ * <li> Nejsou délky zdrojového a cílového pole stejné (při kopírování pole)
  * </ul>
  *
  * @see IAbstrHeap

@@ -70,10 +70,144 @@ public final class AbstrHeapTest {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="vybuduj(Comparable[])">
+    /**
+     * Vybuduje prázdnou haldu a pak ji ověří na prázdnost
+     */
+    @Test(expected = HeapException.class)
+    public void test_01_01_vybuduj() throws HeapException {
+        Integer[] pole = new Integer[0];
+        intHalda.vybuduj(pole);
+        fail();
+    }
+
+    /**
+     * Vybuduje haldu z neutříděného pole a ověří, zda po vytvoření platí haldové uspořádání
+     *
+     * <p> Motivační obrázky:
+     * <ul>
+     * <li> Neupořádaná halda: [5, 2, 9, 1, 7]
+     * <li> Uspořádaná halda: [9, 7, 5, 2, 1]
+     *          9
+     *        /   \
+     *       7     5
+     *     /  \
+     *    1    2
+     * <li> Potomci {@code 9}:
+     *      <ul>
+     *      <li> Levý syn = 7, protože 2 * 0 + 1 = 1 (tj. index)
+     *      <li> Pravý syn = 5, protože 2 * 0 + 2 = 2 (tj. index)
+     *      </ul>
+     * <li> Potomci {@code 7}:
+     *      <ul>
+     *      <li> Levý syn = 1, protože 2 * 1 + 1 = 3 (tj. index)
+     *      <li> Pravý syn = 2, protože 2 * 1 + 2 = 4 (tj. index)
+     *      </ul>
+     * </ul>
+     */
     @Test
-    public void test_01_01_vybuduj() {
+    public void test_01_02_vybuduj() {
         try {
-            final IAbstrHeap<Integer> heap =
+            Integer[] pole = {5, 2, 9, 1, 7};
+            intHalda.vybuduj(pole);
+
+            final int expected1 = 5;
+            final int result1 = intHalda.mohutnost();
+            assertEquals(expected1, result1);
+
+            final int expected2 = 9;
+            final int result2 = intHalda.zpristupniMax();
+            assertEquals(expected2, result2);
+        } catch (HeapException ex) {
+            fail();
+        }
+    }
+
+    /**
+     * Vybuduje haldu z již utříděného pole a ověří, zda po vytvoření platí již existující haldové uspořádání
+     */
+    @Test
+    public void test_01_03_vybuduj() {
+        try {
+            Integer[] pole = {9, 7, 5, 3, 1};
+            intHalda.vybuduj(pole);
+
+            final int expected1 = 5;
+            final int result1 = intHalda.mohutnost();
+            assertEquals(expected1, result1);
+
+            final int expected2 = 9;
+            final int result2 = intHalda.zpristupniMax();
+            assertEquals(expected2, result2);
+        } catch (HeapException ex) {
+            fail();
+        }
+    }
+
+    /**
+     * Vybuduje haldu z částečně utříděného pole a ověří, zda po vytvoření platí haldové uspořádání
+     *
+     * <p> Motivační obrázky:
+     * <ul>
+     * <li> Neupořádaná halda: [5, 2, 9, 1, 7, 4]
+     * <li> Uspořádaná halda: [9, 7, 5, 1, 2, 4]
+     *          9
+     *        /   \
+     *      7      5
+     *    /  \    /
+     *   1    2  4
+     * <li> Potomci {@code 9}:
+     *      <ul>
+     *      <li> Levý syn = 7, protože 2 * 0 + 1 = 1 (tj. index)
+     *      <li> Pravý syn = 5, protože 2 * 0 + 2 = 2 (tj. index)
+     *      </ul>
+     * <li> Potomci {@code 7}:
+     *      <ul>
+     *      <li> Levý syn = 1, protože 2 * 1 + 1 = 3 (tj. index)
+     *      <li> Pravý syn = 2, protože 2 * 1 + 2 = 4 (tj. index)
+     *      </ul>
+     * <li> Potomci {@code 5}:
+     *      <ul>
+     *      <li> Levý syn = 4, protože 2 * 2 + 1 = 5 (tj. index)
+     *      </ul>
+     * </ul>
+     */
+    @Test
+    public void test_01_04_vybuduj() {
+        try {
+            Integer[] pole = {5, 2, 9, 1, 7, 4};
+            intHalda.vybuduj(pole);
+
+            final int expMohutnost1 = 6;
+            final int resMohutnost1 = intHalda.mohutnost();
+            assertEquals(expMohutnost1, resMohutnost1);
+
+            final int expected1 = 9;
+            final int result1 = intHalda.odeberMax();
+            assertEquals(expected1, result1);
+
+            final int expected2 = 7;
+            final int result2 = intHalda.odeberMax();
+            assertEquals(expected2, result2);
+
+            final int expected3 = 5;
+            final int result3 = intHalda.odeberMax();
+            assertEquals(expected3, result3);
+
+            final int expected4 = 4;
+            final int result4 = intHalda.odeberMax();
+            assertEquals(expected4, result4);
+
+            final int expected5 = 2;
+            final int result5 = intHalda.odeberMax();
+            assertEquals(expected5, result5);
+
+            final int expected6 = 1;
+            final int result6 = intHalda.odeberMax();
+            assertEquals(expected6, result6);
+
+            final int expMohutnost2 = 0;
+            final int resMohutnost2 = intHalda.mohutnost();
+            assertEquals(expMohutnost2, resMohutnost2);
         } catch (HeapException ex) {
             fail();
         }
@@ -83,7 +217,24 @@ public final class AbstrHeapTest {
 // <editor-fold defaultstate="collapsed" desc="reorganizuj(Comparator)">
     @Test
     public void test_02_01_reorganizuj() {
+        try {
+            intHalda.vloz(1);
+            intHalda.vloz(5);
+            intHalda.vloz(3);
 
+            final int maxDo = intHalda.zpristupniMax();
+            Comparator<Integer> sestupnyKomparator = Comparator.reverseOrder();
+            intHalda.reorganizuj(sestupnyKomparator);
+            final int maxPo = intHalda.zpristupniMax();
+
+            final int expectedDo = 5;
+            assertEquals(expectedDo, maxDo);
+
+            final int expectedPo = 1;
+            assertEquals(expectedPo, maxPo);
+        } catch (HeapException ex) {
+            fail();
+        }
     }
 // </editor-fold>
 
@@ -247,7 +398,12 @@ public final class AbstrHeapTest {
 // <editor-fold defaultstate="collapsed" desc="vypis(ETypProhl)">
     @Test
     public void test_06_01_vypis() {
-
+        try {
+            intHalda.vybuduj(new Integer[]{6, 5, 4, 3, 2, 1});
+            System.out.println(intHalda.vypis(ETypProhl.HLOUBKA));
+        } catch (HeapException ex) {
+            fail();
+        }
     }
 // </editor-fold>
 }
