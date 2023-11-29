@@ -481,5 +481,79 @@ public final class AbstrHeapTest {
             fail();
         }
     }
+
+    /**
+     * Testuje iterátory do šířky/hloubky (in-order) s větším polem
+     * <p> Reprezentace číselné haldy:
+     * <ol>
+     * <li> Neupořádaná halda: [13, 11, 12, 8, 9, 10, 7, 1, 2, 5, 4, 3, 6, 14, 15, 16, 17]
+     * <li> Uspořádaná halda: [17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1]
+     * <li> Motivační obrázek:
+     *                      17
+     *                   /     \
+     *                 /         \
+     *               /             \
+     *             16               15
+     *           /    \           /    \
+     *         13      9        10      14
+     *       /  \     / \      / \      / \
+     *     11    2   5   4    3   6   12   7
+     *    /  \
+     *   8    1
+     * <li> Do šířky: 17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1
+     * <li> Do hloubky (in-order): 8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7
+     * </ol>
+     *
+     * <p> Reprezentace textové haldy:
+     * <ol>
+     * <li> Neupořádaná halda: [m, k, l, h, i, j, g, a, b, e, d, c, f, n, o, p, q]
+     * <li> Uspořádaná halda: [q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a]
+     * <li> Motivační obrázek:
+     *                      q
+     *                   /     \
+     *                 /         \
+     *               /             \
+     *             p                o
+     *           /    \           /   \
+     *         m       i        j      n
+     *       /  \     / \      / \    / \
+     *      k    b   e   d    c   f  l   g
+     *     / \
+     *    h   a
+     * <li> Do šířky: q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a
+     * <li> Do hloubky (in-order): h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g
+     * </ol>
+     */
+    @Test
+    public void test_06_02_vypis() {
+        try {
+            // --- Integer
+            Integer[] intPole = new Integer[]{13, 11, 12, 8, 9, 10, 7, 1, 2, 5, 4, 3, 6, 14, 15, 16, 17};
+            intHalda.vybuduj(intPole); // -> [17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1]
+
+            final String expIntSirka = "17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1";
+            final String resIntSirka = intHalda.vypis(ETypProhl.SIRKA);
+            assertEquals(expIntSirka, resIntSirka);
+
+            final String expHloubka = "8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7";
+            final String resHloubka = intHalda.vypis(ETypProhl.HLOUBKA);
+            assertEquals(expHloubka, resHloubka);
+
+            // --- String
+            String[] strPole = new String[]{"m", "k", "l", "h", "i", "j", "g", "a", "b", "e", "d", "c", "f", "n", "o", "p", "q"};
+            strHalda.vybuduj(strPole); // -> [q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a]
+
+            final String expSirka = "q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a";
+            final String resSirka = strHalda.vypis(ETypProhl.SIRKA);
+            assertEquals(expSirka, resSirka);
+
+            final String expStrHloubka = "h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g";
+            final String resStrHloubka = strHalda.vypis(ETypProhl.HLOUBKA);
+            assertEquals(expStrHloubka, resStrHloubka);
+
+        } catch (HeapException ex) {
+            fail();
+        }
+    }
 // </editor-fold>
 }

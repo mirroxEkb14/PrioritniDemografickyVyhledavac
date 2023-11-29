@@ -4,6 +4,7 @@ import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.HeapException;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 
 /**
@@ -64,6 +65,18 @@ public interface IAbstrHeap<E> {
      * @return Hodnota počtu prvků
      */
     int mohutnost();
+
+    /**
+     * Prohlídka
+     * <p>
+     * Vytvoří a vrátí iterátor umožňující postupně získat každý prvek prioritní fronty, a to v pořadí do
+     * šířky/hloubky (in-order)
+     *
+     * @param typ Typ prohlížení
+     *
+     * @return Instance iterátoru
+     */
+    Iterator<E> vytvorIterator(ETypProhl typ);
 
     /**
      * Dynamická operace - vkládací metoda - <i>add(E e)</i>

@@ -98,7 +98,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     public void reorganizuj(Comparator<E> komp) throws HeapException {
         pozadatNePrazdnyKomparator(komp);
 
-        final E[] kopieHaldy = (E[]) new Comparable[mohutnost];
+        final E[] kopieHaldy = (E[]) new Object[mohutnost];
         System.arraycopy(halda, 0, kopieHaldy, 0, kopieHaldy.length);
 
         this.komparator = komp;
@@ -122,6 +122,16 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
 // <editor-fold defaultstate="collapsed" desc="Metoda: int mohutnost()">
     @Override
     public int mohutnost() { return mohutnost; }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Metoda: Iterator<E> vytvorIterator(ETypProhl typ)">
+    @Override
+    public Iterator<E> vytvorIterator(ETypProhl typ) {
+        return switch (typ) {
+            case SIRKA -> new SirkaIterator();
+            case HLOUBKA -> new HloubkaIterator();
+        };
+    }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Metoda: void vloz(E prvek)">
@@ -216,10 +226,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         pozadatNeprazdnyTyp(typ);
 
         final StringBuilder sb = new StringBuilder();
-        final Iterator<E> iterator = switch (typ) {
-            case SIRKA -> new SirkaIterator();
-            case HLOUBKA -> new HloubkaIterator();
-        };
+        final Iterator<E> iterator = vytvorIterator(typ);
         while (iterator.hasNext()) {
             final E prvek = iterator.next();
             sb.append(prvek).append(", ");

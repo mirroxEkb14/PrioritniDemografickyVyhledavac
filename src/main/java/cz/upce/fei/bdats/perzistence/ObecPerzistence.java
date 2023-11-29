@@ -2,11 +2,13 @@ package cz.upce.fei.bdats.perzistence;
 
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 import cz.upce.fei.bdats.model.Obec;
+import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.HeapException;
 import cz.upce.fei.bdats.vyjimky.ObecException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.Iterator;
 
 /**
  * Třída implementuje sadu základních operací ukládání/načtení datových entit do/z <i>CSV</i> souborů
@@ -57,7 +59,18 @@ public final class ObecPerzistence implements IPerzistence<Obec> {
     @Override
     public boolean ulozCsv(@NotNull IAbstrHeap<Obec> halda) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(IPerzistence.CESTA_ULOZISTE))) {
-
+            final Iterator<Obec> iterator = halda.vytvorIterator(ETypProhl.HLOUBKA);
+            while (iterator.hasNext()) {
+                final Obec obec = iterator.next();
+                writer.write(obec.getCisloKraje() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getNazevKraje() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getPsc() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getNazevObce() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getPocetMuzu() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getPocetZen() + this.ODDELOVAC_ATRIBUTU);
+                writer.write(obec.getCelkem() + this.ODDELOVAC_ATRIBUTU);
+                writer.newLine();
+            }
         }
         return true;
     }

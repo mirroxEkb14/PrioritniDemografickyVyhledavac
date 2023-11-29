@@ -49,7 +49,7 @@ public interface IAbstrTable<K extends Comparable<K>, V> {
     /**
      * Prohlídka
      * <p>
-     * Vytvoří iterátor umožňující procházení stromu do šířky/hloubky (in-order)
+     * Vytvoří a vrátí iterátor umožňující procházení stromu do šířky/hloubky (in-order)
      *
      * @param typ Typ prohlížení, buďto do šířky, nebo do hloubky (in-order)
      *
