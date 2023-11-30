@@ -13,6 +13,7 @@ import cz.upce.fei.bdats.vyjimky.HeapException;
 import cz.upce.fei.bdats.vyjimky.zpravy.LifoZprava;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -36,13 +37,17 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     /**
+     * Uchvávač typu prvků prioritní fronty pro její vytvoření pomocí {@link Array#newInstance(Class, int)}
+     */
+    private final Class<E> typPrvku;
+    /**
      * Kritérium porovnávání prvků (tj. priorita)
      */
     private Comparator<E> komparator;
     /**
      * Pole pro ukládání prvků haldy
      */
-    private Object[] halda;
+    private E[] halda;
     /**
      * Maximální možná velikost haldy
      */
@@ -57,21 +62,24 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     /**
      * Konstanta reprezentuje výchozí inicializační hodnotu kapacity haldy
      */
-    private static final int VYCHOZI_INICIALIZACNI_KAPACITA = 11;
+    private static final int VYCHOZI_KAPACITA = 11;
 
-    public AbstrHeap(int kapacita,
-                     Comparator<E> komp) throws HeapException {
+    public AbstrHeap(Class<E> typPrvku,
+                     Comparator<E> komp,
+                     int kapacita) throws HeapException {
         pozadatPlatnouKapacitu(kapacita);
         pozadatNePrazdnyKomparator(komp);
 
+        this.typPrvku = typPrvku;
         this.komparator = komp;
-        this.halda = new Object[kapacita];
+        this.halda = (E[]) Array.newInstance(typPrvku, kapacita);
         this.kapacita = kapacita;
         this.mohutnost = 0;
     }
 
-    public AbstrHeap(Comparator<E> komp) throws HeapException {
-        this(VYCHOZI_INICIALIZACNI_KAPACITA, komp);
+    public AbstrHeap(Class<E> typPrvku,
+                     Comparator<E> komp) throws HeapException {
+        this(typPrvku, komp, VYCHOZI_KAPACITA);
     }
 // </editor-fold>
 
@@ -80,7 +88,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     public void vybuduj(E[] pole) throws HeapException {
         pozadatNeprazdnePole(pole);
 
-        this.halda = new Object[pole.length];
+        this.halda = (E[]) Array.newInstance(typPrvku, pole.length);
         this.kapacita = pole.length;
         this.mohutnost = pole.length;
 
@@ -109,7 +117,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
 // <editor-fold defaultstate="collapsed" desc="Metoda: void zrus()">
     @Override
     public void zrus() {
-        halda = new Object[kapacita];
+        halda = (E[]) Array.newInstance(typPrvku, kapacita);
         mohutnost = 0;
     }
 // </editor-fold>
@@ -177,10 +185,11 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      */
     private void zabezpecKapacitu() {
         if (mohutnost == kapacita) {
-            int novaKapacita = halda.length * 2;
-            Object[] novaHalda = new Object[novaKapacita];
+            final int novaKapacita = halda.length * 2;
+            final E[] novaHalda = (E[]) Array.newInstance(typPrvku, novaKapacita);
             System.arraycopy(halda, 0, novaHalda, 0, mohutnost);
             halda = novaHalda;
+            kapacita = novaKapacita;
         }
     }
 // </editor-fold>
@@ -432,7 +441,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když je vstupní kapacita menší než {@code 1}
      *
-     * @see AbstrHeap#AbstrHeap(int, Comparator)
+     * @see AbstrHeap#AbstrHeap(Class, Comparator, int)
      */
     private void pozadatPlatnouKapacitu(int kapacita) throws HeapException {
         if (kapacita < 1)
@@ -447,7 +456,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      *
      * @throws HeapException Když je vstupní komparátor {@code null}
      *
-     * @see AbstrHeap#AbstrHeap(int, Comparator)
+     * @see AbstrHeap#AbstrHeap(Class, Comparator, int)
      * @see AbstrHeap#reorganizuj(Comparator)
      */
     private void pozadatNePrazdnyKomparator(Comparator<E> komp) throws HeapException {
@@ -616,7 +625,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      * @see AbstrHeap#probublejDolu()
      */
     private void vymen(int poz1, int poz2) {
-        final Object docasna = halda[poz1];
+        final E docasna = halda[poz1];
         halda[poz1] = halda[poz2];
         halda[poz2] = docasna;
     }

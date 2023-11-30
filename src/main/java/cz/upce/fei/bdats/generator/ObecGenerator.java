@@ -99,7 +99,7 @@ public final class ObecGenerator implements Generator<Obec> {
         final Iterator<Obec> iterator = halda.vytvorIterator(ETypProhl.HLOUBKA);
         while (iterator.hasNext()) {
             final Obec obec = iterator.next();
-            if (obec.getNazevKraje().equals(nazev)) {
+            if (obec.getNazevObce().equals(nazev)) {
                 return true;
             }
         }

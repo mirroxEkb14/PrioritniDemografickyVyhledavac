@@ -1,4 +1,4 @@
-package strom;
+package halda;
 
 import cz.upce.fei.bdats.halda.AbstrHeap;
 import cz.upce.fei.bdats.halda.IAbstrHeap;
@@ -57,8 +57,8 @@ public final class AbstrHeapTest {
     @Before
     public void setUp() {
         try {
-            intHalda = new AbstrHeap<>(intKomparator);
-            strHalda = new AbstrHeap<>(strKomparator);
+            intHalda = new AbstrHeap<>(Integer.class, intKomparator);
+            strHalda = new AbstrHeap<>(String.class, strKomparator);
         } catch (HeapException ignored) {}
     }
 
@@ -300,7 +300,7 @@ public final class AbstrHeapTest {
     @Test
     public void test_03_03_vloz() {
         try {
-            final IAbstrHeap<Integer> heap = new AbstrHeap<>(2, Integer::compareTo);
+            final IAbstrHeap<Integer> heap = new AbstrHeap<>(Integer.class, Integer::compareTo, 2);
             heap.vloz(30);
             heap.vloz(20);
             heap.vloz(40); // kapacita = 2 * 2 = 4, mohutnost = 2 + 1 = 3

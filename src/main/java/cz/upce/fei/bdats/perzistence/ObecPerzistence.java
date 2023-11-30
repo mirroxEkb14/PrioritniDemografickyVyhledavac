@@ -35,7 +35,7 @@ public final class ObecPerzistence implements IPerzistence<Obec> {
                     final int pocetZen = Integer.parseInt(data[this.INDEX_POCTU_ZEN]);
                     final int celkem = Integer.parseInt(data[this.INDEX_CELKEM]);
 
-                    Obec obec = new Obec(cisloKraje,
+                    final Obec obec = new Obec(cisloKraje,
                             nazevKraje,
                             nazevObce,
                             psc,
