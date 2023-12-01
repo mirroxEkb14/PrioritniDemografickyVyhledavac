@@ -1,45 +1,40 @@
 package cz.upce.fei.bdats.gui.alerty;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import javafx.scene.control.Alert;
 
 import java.util.function.Consumer;
+// </editor-fold>
 
 /**
- * Tato třída vytvoří dialogové okno obsahující zpracovaný prvek, tj. prvek, který byl buď odebrán anebo nalezen
+ * Třída implementuje sadu základních operací pro <i>zobrazení</i> dialogu typu {@link Alert} s informační
+ * zprávou
+ *
+ * <p> Rozšiřuje třídu {@link Alert}
  */
 public final class InfoAlert extends Alert {
 
     /**
-     * Funkce přijímá řetězec a zobrazuje dialogové okno {@link InfoAlert} s tímto vstupním řetězcem
+     * Statická soukromá konstanta vytváří nový alert typu {@link AlertType#INFORMATION} a zobrazuje ho uživateli s
+     * informační zprávou
      */
     private static final Consumer<String> infoLog = t -> {
         final Alert infoOkenko = new InfoAlert(t);
         infoOkenko.showAndWait();
     };
 
-    /**
-     * Konstanty pro výchozí nastavení dialogového okna
-     */
-    private final String TITULEK = "Informační Alert";
-    private final String ZAHLAVI = "Požadovaný údaj";
-
-    /**
-     * Konstruktor inicializuje informační alert a nastavuje titulek a nadpis tohoto dialogového okna
-     *
-     * @param zprava Text, který bude zobrazen v těle alertu
-     */
     public InfoAlert(String zprava) {
         super(AlertType.INFORMATION);
 
-        this.setTitle(TITULEK);
-        this.setHeaderText(ZAHLAVI);
+        this.setTitle("Informační Alert"); // titulek
+        this.setHeaderText("Požadovaný údaj"); // záhlaví
         this.setContentText(zprava);
     }
 
     /**
-     * Volá funkce {@link InfoAlert#infoLog}, čímž zobrazuje informační dialogové okno s předanou zprávou
+     * Veřejná statická metoda volající {@link InfoAlert#infoLog}
      *
-     * @param zprava Informační zpráva (určitý prvek seznam)
+     * @param zprava Informační zpráva
      */
     public static void nahlasInfoLog(String zprava) { infoLog.accept(zprava); }
 }

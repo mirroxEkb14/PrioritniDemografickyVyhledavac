@@ -4,7 +4,7 @@ import cz.upce.fei.bdats.strom.IAbstrTable;
 import cz.upce.fei.bdats.vyjimky.zpravy.StromZprava;
 
 /**
- * Třída je vlastní výjimkou rozšiřující třídu {@link Exception}
+ * Třída je vlastní výjimkou rozšiřující třídu {@link RuntimeException}
  *
  * <p> Vystaví se, když:
  * <ul>
@@ -19,7 +19,7 @@ import cz.upce.fei.bdats.vyjimky.zpravy.StromZprava;
  * @see IAbstrTable
  * @see StromZprava
  */
-public final class StromException extends Exception {
+public final class StromException extends RuntimeException {
 
     public StromException(String zprava) { super(zprava); }
 }

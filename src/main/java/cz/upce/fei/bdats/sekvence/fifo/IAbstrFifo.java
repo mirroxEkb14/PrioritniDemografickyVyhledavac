@@ -1,9 +1,11 @@
 package cz.upce.fei.bdats.sekvence.fifo;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.sekvence.seznam.IAbstrDoubleList;
 import cz.upce.fei.bdats.vyjimky.FifoException;
 
 import java.util.Queue;
+// </editor-fold>
 
 /**
  * Rozhraní definuje sadu základních operací abstraktní datové struktury <i>(ADS)</i> <b>fronta</b> <i>(eng.

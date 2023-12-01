@@ -1,9 +1,9 @@
 package cz.upce.fei.bdats.validatory;
 
 /**
- * Třída implementuje {@link Validator} a poskytuje validaci pro celá čísla
+ * Třída implementuje sadu základních operací pro <i>validaci</i> vstupů typu {@link Integer}
  *
- * <p> Platné celé číslo je považované za takové, které je rovno nebo větší než {@code 0}
+ * <p> Platné celé číslo je považované za takové, jež je rovno nebo větší než {@code 0}
  */
 public final class IntegerValidator implements Validator<Integer> {
 

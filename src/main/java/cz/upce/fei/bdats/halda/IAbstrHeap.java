@@ -1,11 +1,13 @@
 package cz.upce.fei.bdats.halda;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.HeapException;
 
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
+// </editor-fold>
 
 /**
  * Rozhraní definuje sadu základních operací abstraktní datové struktury <i>(ADS)</i> <b>prioritní fronta</b>

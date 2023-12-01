@@ -1,5 +1,6 @@
 package cz.upce.fei.bdats.perzistence;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.strom.ETypProhl;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.Iterator;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základních operací ukládání/načtení datových entit do/z <i>CSV</i> souborů

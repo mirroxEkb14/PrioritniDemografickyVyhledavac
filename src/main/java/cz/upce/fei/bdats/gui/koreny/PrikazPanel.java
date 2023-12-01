@@ -1,18 +1,20 @@
 package cz.upce.fei.bdats.gui.koreny;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.gui.komponenty.KomponentPrikazy;
 import cz.upce.fei.bdats.gui.komponenty.KomponentHalda;
 import javafx.scene.layout.VBox;
+// </editor-fold>
 
 /**
- * Třída reprezentující panel s příkazy. Obsahuje odkaz na instance komponent stromu
+ * Třída reprezentuje panel s příkazy <i>(pravá část okna)</i> obsahující odkaz na instance seznamu s prvky
  *
- * <p>
- * Třída je vzorem Singleton
+ * <p> Rozšiřuje třídu {@link VBox}
+ *
+ * <p> Třída je vzorem <b>Singleton</b>
  */
 public final class PrikazPanel extends VBox {
 
-// <editor-fold defaultstate="collapsed" desc="Instance a Tovární Metoda">
     private static PrikazPanel instance;
 
     public static PrikazPanel getInstance() {
@@ -20,18 +22,9 @@ public final class PrikazPanel extends VBox {
             instance = new PrikazPanel();
         return instance;
     }
-// </editor-fold>
 
-    /**
-     * Privátní konstruktor inicializující panel
-     */
-    private PrikazPanel() {
-        nastavPrikazPanel();
-    }
+    private PrikazPanel() { nastavPrikazPanel(); }
 
-    /**
-     * Nastavuje vzhled a chování panelu
-     */
     private void nastavPrikazPanel() {
         this.getChildren().addAll(
                 KomponentHalda.getInstance(),

@@ -4,14 +4,7 @@ import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.vyjimky.zpravy.ObecZprava;
 
 /**
- * Třída je vlastní výjimkou rozšiřující třídu {@link Exception}
- *
- * <p> Vystaví se, když do konstruktoru vstoupí:
- * <ul>
- * <li> Prázdný textový řetězec
- * <li> Záporné celé číslo
- * <li> Špstně vypočítaný celkový počet mužů a žen
- * </ul>
+ * Třída je vlastní výjimkou rozšiřující třídu {@link RuntimeException}
  *
  * <p> <b>Poznámka</b>: Tato výjimka je typu {@link RuntimeException}, které sice nejsou kritické z hlediska samotné možnosti
  * pokračování aplikace (na rozdíl od {@link Error}), protože je to typ výjimek takový, že nemusí být zachycen
@@ -21,7 +14,7 @@ import cz.upce.fei.bdats.vyjimky.zpravy.ObecZprava;
  * @see Obec
  * @see ObecZprava
  */
-public final class ObecException extends Exception {
+public final class ObecException extends RuntimeException {
 
     public ObecException(String zprava) { super(zprava); }
 }

@@ -1,6 +1,7 @@
 package cz.upce.fei.bdats.generator;
 
 import cz.upce.fei.bdats.halda.IAbstrHeap;
+import cz.upce.fei.bdats.vyjimky.CeleKladneCisloException;
 
 /**
  * Rozhraní deklaruje sadu základních operací pro generování dat a jejich následné vkládání do datové struktury
@@ -45,6 +46,8 @@ public interface Generator<E> {
      *
      * @param halda Prioritní fronta, pro nějž budou vygenerovány nové prvky
      * @param pocet Počet prvků, jež mají být vygenerovány a vloženy do binární haldy
+     *
+     * @throws CeleKladneCisloException Když je hodnota parametru {@code pocet} menší než {@code 0}
      */
-    void generuj(IAbstrHeap<E> halda, int pocet);
+    void generuj(IAbstrHeap<E> halda, int pocet) throws CeleKladneCisloException;
 }

@@ -1,30 +1,29 @@
 package cz.upce.fei.bdats.gui.kontejnery;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TitledPane;
+// </editor-fold>
 
 /**
- * Třída představující titulkový panel {@link TitledPane}, jenž může být rozložený nebo skládaný
+ * Třída reprezentuje <b>titulkový panel</b> obsahující mřížkový panel s výchozím nastavením pro vnitřní
+ * grafické prvky (tlačítka, výběrová pole atd.)
+ *
+ <p> Rozšiřuje třídu {@link TitledPane}
  */
 public class TitulkovyPanel extends TitledPane {
 
     /**
-     * Členská konstanta reprezentující výchozí šířku výběrového pole {@link ChoiceBox}
-     * pro tento komponent
+     * Členská konstanta reprezentuje výchozí šířku výběrového pole {@link ChoiceBox} pro tento komponent
      *
-     * <p> Je přístupná pouze v rámci stejného balíčku (package) nebo pro podtřídy (dědičnost)
+     * <p> Je přístupná pouze v rámci stejného balíčku <i>(package)</i> nebo pro podtřídy <i>(dědičnost)</i>
      */
     protected static final double PREFEROVANA_SIRKA_POLE = 100.0;
 
-// <editor-fold defaultstate="collapsed" desc="Konstanty pro nastavení TitledPane">
     private static final boolean JE_ROZLOZEN = true;
     private static final boolean JE_SKLADAN = false;
     private static final boolean JE_ANIMOVANY = true;
-// </editor-fold>
 
-    /**
-     * Konstruktor inicializující titulkový panel s určitým nastavením
-     */
     public TitulkovyPanel() {
         this.setExpanded(JE_ROZLOZEN);
         this.setCollapsible(JE_SKLADAN);

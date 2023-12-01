@@ -1,5 +1,6 @@
 package cz.upce.fei.bdats.strom;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.sekvence.fifo.*;
 import cz.upce.fei.bdats.sekvence.lifo.*;
 import cz.upce.fei.bdats.vyjimky.FifoException;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základních operací abstraktní datové strultury <i>(ADS)</i> <b>binární vyhledávací

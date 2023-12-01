@@ -1,10 +1,10 @@
 /**
- * Balíček obsahuje hlavní části obrazovky aplikace pracující s binárním vyhledávacím stromem
+ * Balíček {@code koreny} obsahuje zdrojové soubory reprezentující hlavní části obrazovky aplikace, tj. zde se
+ * nacházejí klíčové komponenty GUI, jež tvoří jádro uživatelského rozhraní
  *
- * <p> Zde se nacházejí klíčové komponenty GUI, které tvoří jádro uživatelského rozhraní (jsou klíčové pro
- * interakci uživatele se stromem)
- *
- * @project semestralni_prace_b_amirov
- * @author amirov 11/13/2023
+ * @since 1.0
+ * @project semestralni_prace_c_amirov
+ * @author amirov 11/29/2023
+ * @version 1.1
  */
 package cz.upce.fei.bdats.gui.koreny;

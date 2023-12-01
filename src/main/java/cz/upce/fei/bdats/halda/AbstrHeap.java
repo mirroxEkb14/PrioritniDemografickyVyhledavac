@@ -1,5 +1,6 @@
 package cz.upce.fei.bdats.halda;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.sekvence.fifo.AbstrFifo;
 import cz.upce.fei.bdats.sekvence.fifo.IAbstrFifo;
 import cz.upce.fei.bdats.sekvence.lifo.AbstrLifo;
@@ -17,6 +18,7 @@ import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základních operací abstraktní datové strultury <i>(ADS)</i> <b>prioritní fronta</b>

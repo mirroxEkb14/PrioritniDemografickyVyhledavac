@@ -1,9 +1,9 @@
 package cz.upce.fei.bdats.validatory;
 
 /**
- * Třída implementuje {@link Validator} a poskytuje validaci pro textové řetězce
+ * Třída implementuje sadu základních operací pro <i>validaci</i> vstupů typu {@link String}
  *
- * <p> Platný textový řetězec je považován za takový, který není {@code null} a není prázdný po odstranění
+ * <p> Platný textový řetězec je považován za takový, jenž není {@code null} a není prázdný po odstranění
  * případných bílých znaků - {@link String#trim()}
  */
 public final class TextValidator implements Validator<String> {

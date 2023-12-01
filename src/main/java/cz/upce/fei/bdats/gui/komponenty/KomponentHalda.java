@@ -11,7 +11,7 @@ import cz.upce.fei.bdats.gui.kontejnery.Tlacitko;
 import cz.upce.fei.bdats.gui.koreny.SeznamPanel;
 import cz.upce.fei.bdats.gui.tvurce.TvurceObce;
 import cz.upce.fei.bdats.strom.ETypProhl;
-import cz.upce.fei.bdats.vyjimky.zpravy.ZpravaLogu;
+import cz.upce.fei.bdats.vyjimky.zpravy.LogZprava;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -33,16 +33,16 @@ public final class KomponentHalda extends TitulkovyPanel {
 
         if (t == null || t.isEmpty())
             this.vypisCb.getItems().addAll(
-                    Titulek.CB_VYPIS.getNadpis(), u);
+                    Titulek.CB_VYPIS.nadpis(), u);
         else if (u == null || u.isEmpty())
             this.vypisCb.getItems().addAll(
-                    Titulek.CB_VYPIS.getNadpis(), t);
+                    Titulek.CB_VYPIS.nadpis(), t);
         else
             this.vypisCb.getItems().addAll(
-                    Titulek.CB_VYPIS.getNadpis(), t, u);
+                    Titulek.CB_VYPIS.nadpis(), t, u);
 
         this.vypisCb.setPrefWidth(PREFEROVANA_SIRKA_POLE);
-        this.vypisCb.getSelectionModel().select(Titulek.CB_VYPIS.getNadpis());
+        this.vypisCb.getSelectionModel().select(Titulek.CB_VYPIS.nadpis());
         this.vypisCb.setOnAction(actionEvent -> nastavUdalostVypsani());
     };
 
@@ -64,34 +64,34 @@ public final class KomponentHalda extends TitulkovyPanel {
      * Privátní konstruktor inicializující tlačítka a nastavující události
      */
     private KomponentHalda() {
-        this.vybudujBtn = new Tlacitko(Titulek.BTN_VYBUDUJ.getNadpis());
+        this.vybudujBtn = new Tlacitko(Titulek.BTN_VYBUDUJ.nadpis());
         this.vybudujBtn.setOnAction(actionEvent -> nastavUdalostVybudovani());
 
-        this.reorganizujBtn = new Tlacitko(Titulek.BTN_REORGANIZUJ.getNadpis());
+        this.reorganizujBtn = new Tlacitko(Titulek.BTN_REORGANIZUJ.nadpis());
         this.reorganizujBtn.setOnAction(actionEvent -> nastavUdalostReorganizovani());
         this.reorganizujBtn.setDisable(true);
 
-        this.vlozBtn = new Tlacitko(Titulek.BTN_VLOZ.getNadpis());
+        this.vlozBtn = new Tlacitko(Titulek.BTN_VLOZ.nadpis());
         this.vlozBtn.setOnAction(actionEvent -> nastavUdalostVlozeni());
 
-        this.odeberMaxBtn = new Tlacitko(Titulek.BTN_ODEBER_MAX.getNadpis());
+        this.odeberMaxBtn = new Tlacitko(Titulek.BTN_ODEBER_MAX.nadpis());
         this.odeberMaxBtn.setDisable(true);
         this.odeberMaxBtn.setOnAction(actionEvent -> nastavUdalostOdebirani());
 
         tvurceCbIteratoru.accept(
-                Titulek.CB_SIRKA.getNadpis(),
-                Titulek.CB_HLOUBKA.getNadpis());
+                Titulek.CB_SIRKA.nadpis(),
+                Titulek.CB_HLOUBKA.nadpis());
         this.vypisCb.setDisable(true);
 
-        this.prazdnostBtn = new Tlacitko(Titulek.BTN_PRAZDNOST.getNadpis());
+        this.prazdnostBtn = new Tlacitko(Titulek.BTN_PRAZDNOST.nadpis());
         this.prazdnostBtn.setDisable(true);
         this.prazdnostBtn.setOnAction(actionEvent -> nastavUdalostPrazdnosti());
 
-        this.zrusBtn = new Tlacitko(Titulek.BTN_ZRUS.getNadpis());
+        this.zrusBtn = new Tlacitko(Titulek.BTN_ZRUS.nadpis());
         this.zrusBtn.setDisable(true);
         this.zrusBtn.setOnAction(actionEvent -> nastavUdalostZruseni());
 
-        this.zpristupniMaxBtn = new Tlacitko(Titulek.BTN_ZPRISTUPNI_MAX.getNadpis());
+        this.zpristupniMaxBtn = new Tlacitko(Titulek.BTN_ZPRISTUPNI_MAX.nadpis());
         this.zpristupniMaxBtn.setDisable(true);
 
         nastavKomponentHaldy();
@@ -102,7 +102,7 @@ public final class KomponentHalda extends TitulkovyPanel {
      */
     private void nastavKomponentHaldy() {
         this.setText(
-                Titulek.KOMPONENT_HALDA.getNadpis());
+                Titulek.KOMPONENT_HALDA.nadpis());
         this.setContent(dejGridPane());
     }
 
@@ -145,17 +145,17 @@ public final class KomponentHalda extends TitulkovyPanel {
             final String klic = dialog.getTfNazevObce().getText();
             if (klic.isEmpty()) {
                 ErrorAlert.nahlasErrorLog(
-                        ZpravaLogu.LOG_TVORENI_PRAZDNY_KLIC.getZprava());
+                        LogZprava.LOG_TVORENI_PRAZDNY_KLIC.getZprava());
                 return;
             }
             new TvurceObce().vytvor(dialog)
                     .ifPresentOrElse(
                             novaObec -> {
-                                seznamPanel.pridej(novaObec);
+                                seznamPanel.vloz(novaObec);
                                 obnovTlacitkaProVlozeni();
                             },
                             () -> ErrorAlert.nahlasErrorLog(
-                                    ZpravaLogu.LOG_TVORENI_SPATNA_POLE.getZprava()));
+                                    LogZprava.LOG_TVORENI_SPATNA_POLE.getZprava()));
         }
     }
 
@@ -174,7 +174,7 @@ public final class KomponentHalda extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Action: odeberMax()">
     private void nastavUdalostOdebirani() {
-        seznamPanel.vymaz();
+        seznamPanel.smazMax();
         obnovTlacitkaProOdebirani();
     }
 
@@ -198,10 +198,10 @@ public final class KomponentHalda extends TitulkovyPanel {
             seznamPanel.vypisHaldu(typ);
             provedObnoveniTlacitekSirkaHloubka();
         } else if (jeVybranaAkceProVraceni(zvolenaAkce)) {
-            seznamPanel.schovejStrom();
+            seznamPanel.schovejHaldu();
             obnovTlacitkaProVrat();
             this.vypisCb.getSelectionModel().select(
-                    Titulek.CB_VYPIS.getNadpis());
+                    Titulek.CB_VYPIS.nadpis());
         }
     }
 
@@ -218,7 +218,7 @@ public final class KomponentHalda extends TitulkovyPanel {
         KomponentPrikazy.getInstance().vypniBtnUloz();
 
         tvurceCbIteratoru.accept(
-                Titulek.CB_VRAT.getNadpis(),
+                Titulek.CB_VRAT.nadpis(),
                 null);
     }
 
@@ -235,8 +235,8 @@ public final class KomponentHalda extends TitulkovyPanel {
         KomponentPrikazy.getInstance().zapniBtnUloz();
 
         tvurceCbIteratoru.accept(
-                Titulek.CB_SIRKA.getNadpis(),
-                Titulek.CB_HLOUBKA.getNadpis());
+                Titulek.CB_SIRKA.nadpis(),
+                Titulek.CB_HLOUBKA.nadpis());
     }
 
     /**
@@ -247,8 +247,8 @@ public final class KomponentHalda extends TitulkovyPanel {
      * @return {@code true}, pokud je položka pro prohlížení, jinak {@code false}
      */
     private boolean jeVybranaAkceProProhlizeni(String polozka) {
-        return Titulek.CB_SIRKA.getNadpis().equalsIgnoreCase(polozka)
-                || Titulek.CB_HLOUBKA.getNadpis().equalsIgnoreCase(polozka);
+        return Titulek.CB_SIRKA.nadpis().equalsIgnoreCase(polozka)
+                || Titulek.CB_HLOUBKA.nadpis().equalsIgnoreCase(polozka);
     }
 
     /**
@@ -261,7 +261,7 @@ public final class KomponentHalda extends TitulkovyPanel {
      * @see ETypProhl
      */
     private ETypProhl dejVybranyTyp(@NotNull String polozka) {
-        return polozka.equalsIgnoreCase(Titulek.CB_SIRKA.getNadpis())
+        return polozka.equalsIgnoreCase(Titulek.CB_SIRKA.nadpis())
                 ? ETypProhl.SIRKA : ETypProhl.HLOUBKA;
     }
 
@@ -273,7 +273,7 @@ public final class KomponentHalda extends TitulkovyPanel {
      * @return {@code true}, pokud je položka pro návrat, jinak {@code false}
      */
     private boolean jeVybranaAkceProVraceni(String polozka) {
-        return Titulek.CB_VRAT.getNadpis().equalsIgnoreCase(polozka);
+        return Titulek.CB_VRAT.nadpis().equalsIgnoreCase(polozka);
     }
 // </editor-fold>
 
@@ -283,7 +283,7 @@ public final class KomponentHalda extends TitulkovyPanel {
      */
     private void nastavUdalostPrazdnosti() {
         InfoAlert.nahlasInfoLog(
-                String.valueOf(seznamPanel.dejMohutnost()));
+                String.valueOf(seznamPanel.mohutnost()));
     }
 // </editor-fold>
 

@@ -1,34 +1,31 @@
 package cz.upce.fei.bdats.gui.kontejnery;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
+// </editor-fold>
 
 /**
- * Třída reprezentující mřížkový panel {@link GridPane} pro uspořádání komponent na GUI
+ * Třída reprezentuje <b>mřížkový panel</b> pro uspořádání komponent
+ *
+ * <p> Rozšiřuje třídu {@link GridPane}
  */
 public class MrizkovyPanel extends GridPane {
 
-// <editor-fold defaultstate="collapsed" desc="Konstanty pro odsazení u GridPane">
     public final double ODSAZENI_OKRAJE = 10.0;
     public final double VERTIKALNI_MEZERA = 5.0;
     public final double HORIZONTALNI_MEZERA = 5.0;
-// </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Konstanty pro umístění prvků u GridPane">
     /**
-     * Konstanta vyjadřuje výchozí šiřku tlačítka, které je umístěno jako jedno na celém řádku
-     * tohoto mřížkového panelu
-     */
-    public static final double PREFEROVANA_SIRKA_VELKEHO_TLACITKA = 300.0;
-    /**
-     * Určuje počet sloupců, které má zabírat prvek na jednotlivém rádku mřížkového panelu
+     * Veřejná konstanta určuje počet sloupců, jež má zabírat prvek na jednotlivém rádku mřížkového panelu
      *
      * @see GridPane#setColumnSpan(Node, Integer)
      */
     public static final int ROZPETI_SLOUPCU = 2;
     /**
-     * Konstanty reprezentují sloupcové (columnIndex) a řádkové (rowIndex) indexy pro umístění v mřížce {@link GridPane}
+     * Veřejné konstanty reprezentují sloupcové <i>(columnIndex)</i> a řádkové <i>(rowIndex)</i> indexy pro
+     * umístění v mřížce
      */
     public static final int SLOUPCOVY_INDEX_PRVNI = 0;
     public static final int RADKOVY_INDEX_PRVNI = 0;
@@ -38,11 +35,7 @@ public class MrizkovyPanel extends GridPane {
     public static final int RADKOVY_INDEX_CTVRTY = 3;
     public static final int RADKOVY_INDEX_PATY = 4;
     public static final int RADKOVY_INDEX_SESTY = 5;
-// </editor-fold>
 
-    /**
-     * Konstruktor inicializující mřížkový panel s výchozím nastavením
-     */
     public MrizkovyPanel() {
         this.setPadding(new Insets(ODSAZENI_OKRAJE));
         this.setVgap(VERTIKALNI_MEZERA);

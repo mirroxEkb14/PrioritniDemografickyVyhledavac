@@ -1,10 +1,12 @@
 package cz.upce.fei.bdats.sekvence.fifo;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.sekvence.seznam.AbstrDoubleList;
 import cz.upce.fei.bdats.sekvence.seznam.IAbstrDoubleList;
 import cz.upce.fei.bdats.vyjimky.DoubleListException;
 import cz.upce.fei.bdats.vyjimky.FifoException;
 import cz.upce.fei.bdats.vyjimky.zpravy.FifoZprava;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základních operací abstraktní datové strultury <i>(ADS)</i> <b>fronta</b> založené

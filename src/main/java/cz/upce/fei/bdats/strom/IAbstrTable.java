@@ -1,8 +1,10 @@
 package cz.upce.fei.bdats.strom;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.vyjimky.StromException;
 
 import java.util.Iterator;
+// </editor-fold>
 
 /**
  * Rozhraní definuje sadu základních operací abstraktní datové struktury <i>(ADS)</i> <b>binární vyhledávací

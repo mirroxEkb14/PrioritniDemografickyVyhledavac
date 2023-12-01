@@ -1,9 +1,13 @@
 package cz.upce.fei.bdats.vyjimky;
 
+import cz.upce.fei.bdats.gui.tvurce.Tvoritelny;
+
 /**
- * Tato třída je výjimkou vyvolávající se v případě prázdného řetězce
+ * Třída je vlastní výjimkou rozšiřující třídu {@link RuntimeException}
+ *
+ * @see Tvoritelny
  */
-public final class PrazdnyRetezecException extends Exception {
+public final class PrazdnyRetezecException extends RuntimeException {
 
     public PrazdnyRetezecException() { super("Špatně zadaný textový řetězec"); }
 }

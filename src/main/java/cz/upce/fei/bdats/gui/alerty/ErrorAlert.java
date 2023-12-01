@@ -1,46 +1,40 @@
 package cz.upce.fei.bdats.gui.alerty;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import javafx.scene.control.Alert;
 
 import java.util.function.Consumer;
+// </editor-fold>
 
 /**
- * Třída reprezentuje vlastní alert, rozšířený třídou {@link Alert}, s vlastním výchozím nastavením
+ * Třída implementuje sadu základních operací pro <i>zobrazení</i> dialogu typu {@link Alert} s chybovou
+ * zprávou
+ *
+ * <p> Rozšiřuje třídu {@link Alert}
  */
 public final class ErrorAlert extends Alert {
 
     /**
-     * Konstanty určující titulek a záhlaví chybového okna
-     */
-    private final String TITULEK = "Chybový Alert";
-    private final String ZAHLAVI = "Chyba";
-
-    /**
-     * {@link Consumer} přijímající jako parametr zprávu o chybě vytváří nový alert typu {@link AlertType#ERROR}
-     * a zobrazuje ho uživateli
+     * Statická soukromá konstanta vytváří nový alert typu {@link AlertType#ERROR} a zobrazuje ho uživateli se
+     * zprávou o chybě
      */
     private static final Consumer<String> errorLog = t -> {
         final Alert chyboveOkenko = new ErrorAlert(t);
         chyboveOkenko.showAndWait();
     };
 
-    /**
-     * Konstruktor vytváří nový chybový alert {@link AlertType#ERROR} s výchozím nastavením
-     *
-     * @param zprava Zpráva o chybě
-     */
     public ErrorAlert(String zprava) {
         super(AlertType.ERROR);
 
-        this.setTitle(TITULEK);
-        this.setHeaderText(ZAHLAVI);
+        this.setTitle("Chybový Alert"); // titulek
+        this.setHeaderText("Chyba"); // záhlaví
         this.setContentText(zprava);
     }
 
     /**
-     * Veřejná statická metoda umožňující zaznamenat chybu do logu
+     * Veřejná statická metoda volající {@link ErrorAlert#errorLog}
      *
-     * @param zprava Zprávu o chybě
+     * @param zprava Zpráva o chybě
      */
     public static void nahlasErrorLog(String zprava) { errorLog.accept(zprava); }
 }

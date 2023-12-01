@@ -1,64 +1,60 @@
 package cz.upce.fei.bdats.gui.dialogy;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.gui.Titulek;
 import cz.upce.fei.bdats.gui.kontejnery.MrizkovyPanel;
 import cz.upce.fei.bdats.gui.kontejnery.TitulkovyPanel;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
+// </editor-fold>
 
 /**
- * Třída reprezentující dialog pro generování prvků
+ * Třída reprezentuje <b>dialog</b> pro generování prvků
+ *
+ * <p> Rozšiřuje třídu {@link Dialog}
+ *
+ * <p> Implementuje rozhraní {@link DialogovyKomponent}
  */
 public final class DialogGeneratoru extends Dialog<ButtonType>
         implements DialogovyKomponent {
 
-    /**
-     * Deklarace tlačítek a labelů
-     */
     private final TextField tfPocet;
     private final Label lPocet;
-    /**
-     * Defaultní počet prvků pro generování zobrazující se jako nápověda po otevření dialogu
-     */
-    private final String VYCHOZI_POCET = "10";
 
-    /**
-     * Konstruktor inicializuje textové pole {@link TextField} pro zadání počtu prvků a popisek {@link Label}
-     * označující toto textové pole
-     */
     public DialogGeneratoru() {
-        this.tfPocet = new TextField(VYCHOZI_POCET);
-        this.lPocet = new Label(Titulek.LABEL_POCET_PRVKU.getNadpis());
+        this.tfPocet = new TextField("10");
+        this.lPocet = new Label(Titulek.LABEL_POCET_PRVKU.nadpis());
 
         nastavDialog();
     }
 
-    /**
-     * Nastavení vzhledu dialogu
-     */
     private void nastavDialog() {
-        this.setTitle(Titulek.HLAVICKA_DIALOGU_GENERATORU.getNadpis());
-        this.setDialogPane(this.dejTlacitka(this.getDialogPane()));
-        this.getDialogPane().setContent(dejTitulkovyPanel());
+        this.setTitle(
+                Titulek.HLAVICKA_DIALOGU_GENERATOR.nadpis());
+        this.setDialogPane(
+                this.dejTlacitka(
+                        this.getDialogPane()));
+        this.getDialogPane().setContent(
+                dejTitulkovyPanel());
     }
 
     /**
-     * Vytvoření titulkového panelu {@link TitledPane}
+     * Vytvoří a vrátí titulkový panel {@link TitledPane}
      *
-     * @return Nově vytvořený titulkový panel {@link TitulkovyPanel}
+     * @return Instance {@link TitulkovyPanel}
      */
     private @NotNull TitledPane dejTitulkovyPanel() {
         final TitledPane titulkovyPanel = new TitulkovyPanel();
-        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_GENERATORU.getNadpis());
+        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_GENERATORU.nadpis());
         titulkovyPanel.setContent(dejGridPane());
         return titulkovyPanel;
     }
 
     /**
-     * Vytvoření mřížkového panelu {@link GridPane}
+     * Vytvoří a vrátí mřížkový panel {@link GridPane}
      *
-     * @return Nově vytvořený mřížkový panel {@link MrizkovyPanel}
+     * @return Instace {@link MrizkovyPanel}
      */
     private @NotNull GridPane dejGridPane() {
         final GridPane gridPane = new MrizkovyPanel();

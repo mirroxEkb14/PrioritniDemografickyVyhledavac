@@ -3,21 +3,15 @@ package cz.upce.fei.bdats.gui.koreny;
 import javafx.scene.layout.HBox;
 
 /**
- * Třída představuje kořenový uzel skládající se ze dvou části:
+ * Třída reprezentuje kořenový uzel skládající se ze dvou části:
  * <ol>
- * <li> {@link SeznamPanel}: seznam prvků
- * <li> {@link PrikazPanel}: panel s tlačítky pro správu seznamu
+ * <li> {@link SeznamPanel}: Seznam prvků haldy v pořadí jejich vložení, resp. načtení <i>(levá část okna)</i>
+ * <li> {@link PrikazPanel}: Panel s tlačítky pro správu seznamu <i>(pravá část okna)</i>
  * </ol>
  */
 public final class Okno extends HBox {
 
-    /**
-     * Atribut, reprezentující levou část okna (panel se seznam prvků)
-     */
     private final SeznamPanel seznam;
-    /**
-     * Atribut, reprezentující pravou část okna (panel se tlačítky)
-     */
     private final PrikazPanel panelPrikazu;
 
     public Okno() {
@@ -26,7 +20,5 @@ public final class Okno extends HBox {
         nastavOkno();
     }
 
-    private void nastavOkno() {
-        this.getChildren().addAll(seznam, panelPrikazu);
-    }
+    private void nastavOkno() { this.getChildren().addAll(seznam, panelPrikazu); }
 }

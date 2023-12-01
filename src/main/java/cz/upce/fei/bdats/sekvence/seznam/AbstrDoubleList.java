@@ -1,11 +1,13 @@
 package cz.upce.fei.bdats.sekvence.seznam;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.vyjimky.DoubleListException;
 import cz.upce.fei.bdats.vyjimky.zpravy.DoubleListZprava;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základích operací abstraktní datové struktury <i>(ADS)</i> <b>obousměrně

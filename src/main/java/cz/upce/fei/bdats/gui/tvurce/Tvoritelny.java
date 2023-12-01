@@ -1,72 +1,67 @@
 package cz.upce.fei.bdats.gui.tvurce;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.gui.dialogy.DialogovyKomponent;
-import cz.upce.fei.bdats.vyjimky.CeleCisloException;
+import cz.upce.fei.bdats.validatory.IntegerValidator;
+import cz.upce.fei.bdats.vyjimky.CeleKladneCisloException;
 import cz.upce.fei.bdats.vyjimky.PrazdnyRetezecException;
 
 import java.util.Optional;
 import java.util.function.Predicate;
+// </editor-fold>
 
 /**
- * Rozhraní definuje tvorbu objektů. Implementující třídy implementují metodu pro vytvoření nového objektu
+ * Rozhraní definuje sadu základnách operací pro <i>tvorbu</i> nových objektů
  *
- * @param <T> Typ objektu, který má být vytvořen
+ * @param <T> Typ objektu, jenž má být vytvořen
  */
 public interface Tvoritelny<T> {
-
-    int NULTA_HODNOTA = 0;
-    /**
-     * Validátor pro ověření, zda zadaný řetězec obsahuje celé kladné číslo větší než nula
-     */
-    Predicate<String> validatorCelychCisel = t -> {
-        if (t.isEmpty()) {
-            return false;
-        }
-        try {
-            final int cislo = Integer.parseInt(t);
-            return cislo > NULTA_HODNOTA;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    };
 
     /**
      * Validátor ověří, zda vstupní řetězec je prázdný nebo není
      */
     Predicate<String> validatorPrazdnychRetezcu = String::isEmpty;
 
+    IntegerValidator validator = new IntegerValidator();
+
     /**
      * Vytvoří objekt typu {@link T}
      *
      * @param dialog Instance dialogu, z něhož se budou volat gettery pro zjišťování dat zadaných uživatelem
      *
-     * @return Instance vytvořeného objektu nebo prázdná hodnota {@link Optional}, pokud není možné objekt vytvořit
+     * @return Instance vytvořeného objektu, jinak prázdná hodnota {@link Optional}, pokud není možné objekt vytvořit
      * kvůli špatně zadaným údajů uživatelem
      */
     Optional<T> vytvor(DialogovyKomponent dialog);
 
     /**
-     * Převede zadaný řetězec na celé číslo pomocí validátoru {@link Tvoritelny#validatorCelychCisel} pro ověření,
-     * zda je zadaný řetězec platným celým kladným číslem větším než nula
+     * Převede zadaný řetězec na celé číslo pomocí validátoru {@link Tvoritelny#validator} pro ověření,
+     * zda je vstupní řetězec platným celým kladným číslem
      *
-     * @param retezec Řetězec, který má být převeden na celé číslo
+     * @param retezec Textový řetězec, jenž má být převeden na celé číslo
      *
-     * @return Převedené celé číslo
+     * @return Celé číslo typu {@link Integer}
      *
-     * @throws CeleCisloException Když zadaný řetězec není platným celým kladným číslem větším než nula
+     * @throws CeleKladneCisloException Když zadaný řetězec není celým číslem větším než nula
      */
-    default int dejCeleCislo(String retezec) throws CeleCisloException {
-        if (validatorCelychCisel.test(retezec))
-            return Integer.parseInt(retezec);
-        throw new CeleCisloException();
+    default int dejCeleCislo(String retezec) throws CeleKladneCisloException {
+        try {
+            final int cislo = Integer.parseInt(retezec);
+            if (validator.jeValidni(cislo))
+                return cislo;
+            else
+                throw new CeleKladneCisloException();
+        } catch (NumberFormatException ex) {
+            throw new CeleKladneCisloException();
+        }
     }
 
     /**
-     * Vratí ten samý textový řetězec, pokud není prázdný
+     * Ověří hodnotu vstupního řetězce a vrátí ho v případě, že není prázdný
      *
-     * @param retezec Řetězec, který má být ověřen na prázdnost a být vracen
+     * @param retezec Textový řetězec, jenž má být ověřen na prázdnost a být vracen
      *
-     * @return Vstupní textový řetězec
+     * @return Hodnota vstupního textového řetězce
      *
      * @throws PrazdnyRetezecException Když je zadaný řetězec prázdný
      *

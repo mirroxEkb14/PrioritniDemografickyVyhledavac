@@ -1,9 +1,11 @@
 package cz.upce.fei.bdats.sekvence.lifo;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.sekvence.seznam.IAbstrDoubleList;
 import cz.upce.fei.bdats.vyjimky.LifoException;
 
 import java.util.Stack;
+// </editor-fold>
 
 /**
  * Rozhraní definuje sadu základních operací abstraktní datové struktury <i>(ADS)</i> <b>zásobník</b> <i>(eng.

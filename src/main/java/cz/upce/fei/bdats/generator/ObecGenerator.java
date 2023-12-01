@@ -1,5 +1,6 @@
 package cz.upce.fei.bdats.generator;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.strom.ETypProhl;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Random;
+// </editor-fold>
 
 /**
  * Třída implementuje sadu základních operací pro generování dat a jejich následné vkládání do <b>prioritní

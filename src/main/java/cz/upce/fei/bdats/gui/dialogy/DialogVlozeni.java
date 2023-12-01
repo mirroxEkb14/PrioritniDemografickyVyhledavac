@@ -1,84 +1,72 @@
 package cz.upce.fei.bdats.gui.dialogy;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.gui.Titulek;
 import cz.upce.fei.bdats.gui.kontejnery.MrizkovyPanel;
 import cz.upce.fei.bdats.gui.kontejnery.TitulkovyPanel;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
+// </editor-fold>
 
 /**
- * Třída reprezentuje dialogové okno pro vkládání nových údajů o obci
+ * Třída reprezentuje <b>dialog</b> pro vkládání nových údajů o obci
  *
- * <p> Implementuje rozhraní {@link DialogovyKomponent} definující metody pro výchozí nastavení/ošetřování
- * prvků tohoto dialogu
+ * <p> Rozšiřuje třídu {@link Dialog}
  *
- * @see Dialog
+ * <p> Implementuje rozhraní {@link DialogovyKomponent}
  */
 public final class DialogVlozeni extends Dialog<ButtonType>
         implements DialogovyKomponent {
 
-    /**
-     * Deklarace prvků tohoto dialogu:
-     * <ul>
-     * <li> {@link TextField}: pro zadávání údajů o obci
-     * <li> {@link Label}: pro lepší orientaci uživatele
-     * </ul>
-     */
     private final TextField tfCislo, tfNazevKraje, tfNazevObce, tfPSC, tfPocetMuzu, tfPocetZen;
     private final Label lCislo, lNazevKraje, lNazevObce, lPSC, lPocetMuzu, lPocetZen;
-    /**
-     * Výchozí hodnoty pro textová pole (nápovědy)
-     */
-    private final String VYCHOZI_NAZEV_KRAJE = "Pardubicky";
-    private final String VYCHOZI_CISLO_KRAJE = "10";
-    private final String VYCHOZI_INTEGER = "1";
 
-    /**
-     * Konstruktor inicializuje textová pole a popisky, pak volá metodu pro nastavení dialogu
-     */
     public DialogVlozeni() {
-        this.tfCislo = new TextField(VYCHOZI_CISLO_KRAJE);
-        this.tfNazevKraje = new TextField(VYCHOZI_NAZEV_KRAJE);
+        this.tfCislo = new TextField("10");
+        this.tfNazevKraje = new TextField("Pardubicky");
         this.tfNazevObce = new TextField();
-        this.tfPSC = new TextField(VYCHOZI_INTEGER);
-        this.tfPocetMuzu = new TextField(VYCHOZI_INTEGER);
-        this.tfPocetZen = new TextField(VYCHOZI_INTEGER);
-        this.lCislo = new Label(Titulek.LABEL_CISLO_KRAJE.getNadpis());
-        this.lNazevKraje = new Label(Titulek.LABEL_NAZEV_KRAJE.getNadpis());
-        this.lNazevObce = new Label(Titulek.LABEL_NAZEV_OBCE.getNadpis());
-        this.lPSC = new Label(Titulek.LABEL_PSC.getNadpis());
-        this.lPocetMuzu = new Label(Titulek.LABEL_MUZE.getNadpis());
-        this.lPocetZen = new Label(Titulek.LABEL_ZENY.getNadpis());
+        this.tfPSC = new TextField("1");
+        this.tfPocetMuzu = new TextField("1");
+        this.tfPocetZen = new TextField("1");
+        this.lCislo = new Label(
+                Titulek.LABEL_CISLO_KRAJE.nadpis());
+        this.lNazevKraje = new Label(
+                Titulek.LABEL_NAZEV_KRAJE.nadpis());
+        this.lNazevObce = new Label(
+                Titulek.LABEL_NAZEV_OBCE.nadpis());
+        this.lPSC = new Label(
+                Titulek.LABEL_PSC.nadpis());
+        this.lPocetMuzu = new Label(
+                Titulek.LABEL_MUZE.nadpis());
+        this.lPocetZen = new Label(
+                Titulek.LABEL_ZENY.nadpis());
 
         nastavDialog();
     }
 
-    /**
-     * Nastavuje vzhled dialogového okna
-     */
     private void nastavDialog() {
-        this.setTitle(Titulek.HLAVICKA_DIALOG_VLOZENI.getNadpis());
+        this.setTitle(Titulek.HLAVICKA_DIALOG_VLOZENI.nadpis());
         this.setDialogPane(this.dejTlacitka(this.getDialogPane()));
         this.getDialogPane().setContent(dejTitulkovyPanel());
     }
 
     /**
-     * Vytváří a vrací titulkový panel {@link TitledPane} pro dialogové okno
+     * Vytvoří a vrátí titulkový panel {@link TitledPane}
      *
-     * @return Nově vytvořený titulkový panel {@link TitulkovyPanel}
+     * @return Instance {@link TitulkovyPanel}
      */
     private @NotNull TitledPane dejTitulkovyPanel() {
         final TitledPane titulkovyPanel = new TitulkovyPanel();
-        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_VLOZENI.getNadpis());
+        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_VLOZENI.nadpis());
         titulkovyPanel.setContent(dejGridPane());
         return titulkovyPanel;
     }
 
     /**
-     * Vytváří a vrací mřížkový panel {@link GridPane} pro rozmístění komponent tohoto dialogového okna
+     * Vytvoří a vrátí mřížkový panel {@link GridPane}
      *
-     * @return Nově vytvořený mřížkový panel {@link MrizkovyPanel}
+     * @return Instace {@link MrizkovyPanel}
      */
     private @NotNull GridPane dejGridPane() {
         final GridPane gridPane = new MrizkovyPanel();

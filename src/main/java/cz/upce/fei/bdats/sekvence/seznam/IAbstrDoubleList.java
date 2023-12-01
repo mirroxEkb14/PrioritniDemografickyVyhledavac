@@ -1,10 +1,12 @@
 package cz.upce.fei.bdats.sekvence.seznam;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.vyjimky.DoubleListException;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+// </editor-fold>
 
 /**
  * Rozhraní deklaruje sadu zádladních operací abstraktní datové struktury <i>(ADS)</i> <b>obousměrně necyklický

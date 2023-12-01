@@ -1,21 +1,32 @@
 package cz.upce.fei.bdats.gui.koreny;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.agenda.AgendaKraj;
 import cz.upce.fei.bdats.agenda.IAgendaKraj;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.AgendaKrajException;
+import cz.upce.fei.bdats.vyjimky.CeleKladneCisloException;
+import cz.upce.fei.bdats.vyjimky.SeznamPanelException;
+import cz.upce.fei.bdats.vyjimky.zpravy.SeznamPanelZprava;
 import javafx.scene.control.ListView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+// </editor-fold>
 
-public class SeznamPanel extends ListView<String> implements ISeznamPanel<String> {
+/**
+ * Třída implementuje sadu základních operací pro <i>správu</i> seznamu {@link ListView} a umožňuje volat
+ * jednotlivé metody z agendy
+ *
+ * <p> Rozšiřuje třídu {@link ListView}
+ * <p> Implementuje rozhraní {@link ISeznamPanel}
+ */
+public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
 
     private final IAgendaKraj<Obec> agendaKraj = AgendaKraj.getInstance();
-    private final ListView<String> ulozenyStav = new ListView<>();
+    private final ListView<Obec> ulozenyStav = new ListView<>();
 
-// <editor-fold defaultstate="collapsed" desc="Instance a Tovární Metoda">
     private static SeznamPanel instance;
 
     public static SeznamPanel getInstance() {
@@ -23,42 +34,68 @@ public class SeznamPanel extends ListView<String> implements ISeznamPanel<String
             instance = new SeznamPanel();
         return instance;
     }
-// </editor-fold>
 
     private SeznamPanel() { this.nastavSeznamPanel(this); }
 
     @Override
-    public void pridej(Obec obec) {
+    public void vloz(Obec obec) throws SeznamPanelException {
         try {
             agendaKraj.vloz(obec);
-            pridejPrvek(obec);
-        } catch (AgendaKrajException ignored) {}
+            pridej(obec);
+        } catch (AgendaKrajException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_VSTUP_OBCE.getZprava());
+        }
     }
 
     @Override
-    public void obnovSeznam(int pocet) {
+    public void obnovSeznam(int pocet) throws SeznamPanelException {
         try {
             agendaKraj.generuj(pocet);
-            vycistiSeznam();
+            zrusSeznamPanel();
             pridejHalduDoSeznamu();
-        } catch (AgendaKrajException ignored) {}
+        } catch (CeleKladneCisloException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.NEPLATNE_CELE_CISLO.getZprava());
+        }
     }
 
     @Override
-    public void vymaz() {
+    public void smazMax() throws SeznamPanelException {
         try {
             vymazPrvek(agendaKraj.odeberMax());
-        } catch (AgendaKrajException ignored) {}
+        } catch (AgendaKrajException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_SEZNAM.getZprava());
+        }
     }
 
     @Override
-    public void vypisHaldu(ETypProhl typ) {
+    public boolean jePrazdny() { return this.getItems().isEmpty(); }
+
+    @Override
+    public int mohutnost() { return agendaKraj.mohutnost(); }
+
+    @Override
+    public void vyprazdni() {
+        agendaKraj.zrus();
+        zrusSeznamPanel();
+    }
+
+    @Override
+    public String vypisHaldu(ETypProhl typ) throws SeznamPanelException {
         try {
             ulozAktualniStav();
-            vycistiSeznam();
-            this.getItems().add(agendaKraj.vypis(typ));
-        } catch (AgendaKrajException ignored) {}
+            zrusSeznamPanel();
+            return agendaKraj.vypis(typ);
+        } catch (AgendaKrajException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_VSTUP_TYPU.getZprava());
+        }
     }
+
+    @Override
+    public void schovejHaldu() { nactiPredchoziHaldu(); }
 
     @Override
     public boolean nacti(String cesta) {
@@ -72,46 +109,58 @@ public class SeznamPanel extends ListView<String> implements ISeznamPanel<String
     @Override
     public boolean uloz() { return agendaKraj.uloz(); }
 
-    @Override
-    public void vyprazdni() {
-        agendaKraj.zrus();
-        vycistiSeznam();
-    }
-
-    @Override
-    public void schovejStrom() { nactiPredchoziStav(); }
-
-    @Override
-    public boolean jePrazdny() { return this.getItems().isEmpty(); }
-
-    @Override
-    public int dejMohutnost() { return agendaKraj.mohutnost(); }
-
 // <editor-fold defaultstate="collapsed" desc="Privátní metody">
-    private void pridejPrvek(@NotNull Obec obec) {
-    this.getItems().add(obec.toString());
-}
-
-    private void vymazPrvek(@NotNull Obec obec) {
-        this.getItems().remove(obec.toString());
+    /**
+     * @param obec Instance obce pro vložení do seznamu {@link ListView}
+     *
+     * @see SeznamPanel#vloz(Obec)
+     * @see SeznamPanel#pridejHalduDoSeznamu()
+     */
+    private void pridej(@NotNull Obec obec) {
+        this.getItems().add(obec);
     }
 
-    private void vycistiSeznam() { this.getItems().clear(); }
+    /**
+     * @param obec Instance obce pro smazání ze seznamu {@link ListView}
+     *
+     * @see SeznamPanel#smazMax()
+     */
+    private void vymazPrvek(@NotNull Obec obec) {
+        this.getItems().remove(obec);
+    }
 
+    /**
+     * @see SeznamPanel#obnovSeznam(int)
+     * @see SeznamPanel#vyprazdni()
+     * @see SeznamPanel#vypisHaldu(ETypProhl)
+     * @see SeznamPanel#nactiPredchoziHaldu()
+     */
+    private void zrusSeznamPanel() { this.getItems().clear(); }
+
+    /**
+     * @see SeznamPanel#vypisHaldu(ETypProhl)
+     */
     private void ulozAktualniStav() {
         ulozenyStav.getItems().addAll(this.getItems());
     }
 
-    private void nactiPredchoziStav() {
-        vycistiSeznam();
+    /**
+     * @see SeznamPanel#schovejHaldu()
+     */
+    private void nactiPredchoziHaldu() {
+        zrusSeznamPanel();
         this.getItems().addAll(ulozenyStav.getItems());
         ulozenyStav.getItems().clear();
     }
 
+    /**
+     * @see SeznamPanel#obnovSeznam(int)
+     * @see SeznamPanel#nacti(String)
+     */
     private void pridejHalduDoSeznamu() {
         final Iterator<Obec> iterator = agendaKraj.vytvorIterator(ETypProhl.HLOUBKA);
         while (iterator.hasNext()) {
-            pridejPrvek(iterator.next());
+            pridej(iterator.next());
         }
     }
 // </editor-fold>

@@ -1,34 +1,34 @@
 package cz.upce.fei.bdats.gui.tvurce;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.gui.dialogy.DialogVlozeni;
 import cz.upce.fei.bdats.gui.dialogy.DialogovyKomponent;
-import cz.upce.fei.bdats.vyjimky.CeleCisloException;
+import cz.upce.fei.bdats.vyjimky.CeleKladneCisloException;
 import cz.upce.fei.bdats.vyjimky.ObecException;
 import cz.upce.fei.bdats.vyjimky.PrazdnyRetezecException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+// </editor-fold>
 
 /**
- * Třída obsahuje metody pro vytvoření nové obce podle údajů zadanými uživateli přes {@link DialogovyKomponent}
+ * Třída implementuje sadu základních operací pro <i>tvorbu</i> nových obcí
+ *
+ * <p> Implementuje rozhraní {@link Tvoritelny}
  */
 public final class TvurceObce implements Tvoritelny<Obec> {
 
-    /**
-     * <b>Poznámka</b>: U této implementace nedochází k ověření názvu obce na prázdnost a unikátnost - to se musí
-     * provést před voláním této metody
-     */
     @Override
-    public Optional<Obec> vytvor(@NotNull DialogovyKomponent dialog) {
+    public Optional<Obec> vytvor(@NotNull DialogovyKomponent dialogVlozeni) {
         try {
-            if (dialog instanceof DialogVlozeni dialogVlozeni) {
-                final int cisloKraje = this.dejCeleCislo(dialogVlozeni.getTfCislo().getText());
-                final String nazevObce = dialogVlozeni.getTfNazevObce().getText();
-                final String nazevKraje = dialogVlozeni.getTfNazevKraje().getText();
-                final String pscObce = this.dejNeprazdnyRetezec(dialogVlozeni.getTfPSC().getText());
-                final int pocetMuzu = this.dejCeleCislo(dialogVlozeni.getTfPocetMuzu().getText());
-                final int pocetZen = this.dejCeleCislo(dialogVlozeni.getTfPocetZen().getText());
+            if (dialogVlozeni instanceof DialogVlozeni dialog) {
+                final int cisloKraje = this.dejCeleCislo(dialog.getTfCislo().getText());
+                final String nazevObce = dialog.getTfNazevObce().getText();
+                final String nazevKraje = dialog.getTfNazevKraje().getText();
+                final String pscObce = this.dejNeprazdnyRetezec(dialog.getTfPSC().getText());
+                final int pocetMuzu = this.dejCeleCislo(dialog.getTfPocetMuzu().getText());
+                final int pocetZen = this.dejCeleCislo(dialog.getTfPocetZen().getText());
                 final int celkem = pocetMuzu + pocetZen;
 
                 return Optional.of(new Obec(
@@ -41,7 +41,7 @@ public final class TvurceObce implements Tvoritelny<Obec> {
                         celkem));
             }
             return Optional.empty();
-        } catch (CeleCisloException | PrazdnyRetezecException | ObecException ex) {
+        } catch (CeleKladneCisloException | PrazdnyRetezecException | ObecException ex) {
             return Optional.empty();
         }
     }

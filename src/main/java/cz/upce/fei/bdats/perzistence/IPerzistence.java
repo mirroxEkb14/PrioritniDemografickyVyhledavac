@@ -1,11 +1,13 @@
 package cz.upce.fei.bdats.perzistence;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+// </editor-fold>
 
 /**
  * Rozhraní deklaruje sadu základních operací ukládání/načtení datových entit do/z <i>CSV</i> souborů
