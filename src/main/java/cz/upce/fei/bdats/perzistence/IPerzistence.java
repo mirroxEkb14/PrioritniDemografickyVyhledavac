@@ -25,7 +25,7 @@ public interface IPerzistence<E> {
      */
     String CESTA_VZOR = "src/main/java/cz/upce/fei/bdats/util/vzor.csv";
     String CESTA_KRAJE = "src/main/java/cz/upce/fei/bdats/util/kraje.csv";
-    String CESTA_ULOZISTE = "src/main/java/cz/upce/fei/bdast/util/uloziste.csv";
+    String CESTA_ULOZISTE = "src/main/java/cz/upce/fei/bdats/util/uloziste.csv";
     /**
      * Veřejná konstanta reprezentuje oddělovač <i>(eng. delimiter)</i> jednotlivých atributů podle struktuy
      * <i>CSV</i> souboru

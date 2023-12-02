@@ -12,7 +12,10 @@ import cz.upce.fei.bdats.gui.koreny.ISeznamPanel;
 import cz.upce.fei.bdats.gui.koreny.SeznamPanel;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.perzistence.IPerzistence;
+import cz.upce.fei.bdats.vyjimky.CeleKladneCisloException;
 import cz.upce.fei.bdats.vyjimky.zpravy.LogZprava;
+import cz.upce.fei.bdats.generator.Generator;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -24,33 +27,39 @@ import java.util.function.BiConsumer;
 // </editor-fold>
 
 /**
- * Tato třída reprezentuje komponent na panelu s příkazy, který obsahuje tlačítka pro generování obcí
- * {@link Titulek#BTN_GENERUJ} a načtení obcí ze souboru {@link Titulek#CB_NACTI}
+ * Třída implementuje sadu operací pro <i>ovládání</i> tlačítek, jež pracují s vedlejšími operacemi prioritní
+ * fronty
  *
- * <p> Je Singleton třídou
+ * <p> Třída je vzorem <b>Singleton</b>
+ *
+ * <p> Rozšiřuje třídu {@link TitulkovyPanel}
+ *
+ * @see Generator
+ * @see IPerzistence
  */
 public class KomponentPrikazy extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     private final Button generujBtn, ulozBtn;
     private final ChoiceBox<String> nactiCb = new ChoiceBox<>();
+
+    private final ISeznamPanel<Obec> seznamPanel = SeznamPanel.getInstance();
+
     /**
-     * Atribut reprezentuje lambdový výraz, jenž předefinuje výběrové pole
+     * Atribut reprezentuje lambdový výraz, jenž předefinuje výběrové pole {@link ChoiceBox}
      */
     private final BiConsumer<String, String> tvurceCbNacteni = (t, u) -> {
         this.nactiCb.getItems().clear();
         this.nactiCb.getItems().addAll(
                 Titulek.CB_NACTI.nadpis(), t, u);
         if (IPerzistence.jeSoubor(IPerzistence.CESTA_ULOZISTE))
-            this.nactiCb.getItems().add(Titulek.CB_ULOZISTE.nadpis());
+            this.nactiCb.getItems().add(
+                    Titulek.CB_ULOZISTE.nadpis());
         this.nactiCb.setPrefWidth(PREFEROVANA_SIRKA_POLE);
-        this.nactiCb.getSelectionModel().select(Titulek.CB_NACTI.nadpis());
+        this.nactiCb.getSelectionModel().select(
+                Titulek.CB_NACTI.nadpis());
         this.nactiCb.setOnAction(actionEvent -> nastavUdalostNacteni());
     };
-    /**
-     * Instanční proměnná reprezentuje instanci na {@link SeznamPanel} pro generování nových prvků
-     */
-    private final ISeznamPanel<Obec> seznamPanel = SeznamPanel.getInstance();
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Instance a Tovární Metoda">
@@ -64,9 +73,6 @@ public class KomponentPrikazy extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Nastavení třídy">
-    /**
-     * Konstruktor inicizlizuje tlačítka a nastaví tento grafický komponent
-     */
     public KomponentPrikazy() {
         this.generujBtn = new Tlacitko(Titulek.BTN_GENERUJ.nadpis());
         this.generujBtn.setOnAction(actionEvent -> nastavUdalostGeneratoru());
@@ -107,10 +113,6 @@ public class KomponentPrikazy extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Action: generuj()/nacti()">
-    /**
-     * Po stisknutí tlačítka {@link Titulek#BTN_GENERUJ} se provede generace nových obcí, případně
-     * přidání něchto prvků jak do binárního stromu, tak i do grafického seznamu
-     */
     private void nastavUdalostGeneratoru() {
         final DialogGeneratoru dialog = new DialogGeneratoru();
         final Optional<ButtonType> odpoved = dialog.showAndWait();
@@ -118,34 +120,34 @@ public class KomponentPrikazy extends TitulkovyPanel {
             try {
                 final int pocet = Integer.parseInt(dialog.getTfNazevObce().getText());
                 seznamPanel.obnovSeznam(pocet);
-                provedObnoveniTlacitekGeneratorNacteni();
-            } catch (NumberFormatException ex) {
-                ErrorAlert.nahlasErrorLog(LogZprava.LOG_GENERATOR_SPATNY_POCET.getZprava());
+                obnovTlacitkaGeneratorNacteni();
+            } catch (NumberFormatException | CeleKladneCisloException ex) {
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.LOG_GENERATOR_SPATNY_POCET.getZprava());
             }
         }
     }
 
-    /**
-     * Po stisktuní tlačítka {@link Titulek#CB_NACTI} do stromu se načte (přidá se) data ze souboru s příponou
-     * {@code .csv}, pak se tyto nové prvky přidají do grafického seznamu
-     */
     private void nastavUdalostNacteni() {
         final String zvolenaPolozka = nactiCb.getSelectionModel().getSelectedItem();
         if (Titulek.CB_VZOR.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_VZOR))
-                ErrorAlert.nahlasErrorLog(LogZprava.LOG_NACTENI_VZORU.getZprava());
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.LOG_NACTENI_VZORU.getZprava());
         } else if (Titulek.CB_KRAJE.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_KRAJE))
-                ErrorAlert.nahlasErrorLog(LogZprava.LOG_NACTENI_KRAJE.getZprava());
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.LOG_NACTENI_KRAJE.getZprava());
         } else if (Titulek.CB_ULOZISTE.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_ULOZISTE))
-                ErrorAlert.nahlasErrorLog(LogZprava.LOG_NACTENI_ULOZISTE.getZprava());
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.LOG_NACTENI_ULOZISTE.getZprava());
         }
         this.nactiCb.getSelectionModel().select(Titulek.CB_NACTI.nadpis());
-        provedObnoveniTlacitekGeneratorNacteni();
+        obnovTlacitkaGeneratorNacteni();
     }
 
-    private void provedObnoveniTlacitekGeneratorNacteni() {
+    private void obnovTlacitkaGeneratorNacteni() {
         if(KomponentHalda.getInstance().jeVypnutoBtnReprganizuj())
             KomponentHalda.getInstance().zapniBtnReorganizuj();
         if (KomponentHalda.getInstance().jeVypnutoBtnOdeberMax())
@@ -166,13 +168,15 @@ public class KomponentPrikazy extends TitulkovyPanel {
 // <editor-fold defaultstate="collapsed" desc="Action: uloz()">
     private void nastavUdalostUlozeni() {
         if (seznamPanel.uloz()) {
-            InfoAlert.nahlasInfoLog(LogZprava.LOG_USPESNE_ULOZENI.getZprava());
+            InfoAlert.nahlasInfoLog(
+                    LogZprava.LOG_USPESNE_ULOZENI.getZprava());
             tvurceCbNacteni.accept(
                     Titulek.CB_VZOR.nadpis(),
                     Titulek.CB_KRAJE.nadpis());
             return;
         }
-        ErrorAlert.nahlasErrorLog(LogZprava.LOG_CHYBNE_ULOZENI.getZprava());
+        ErrorAlert.nahlasErrorLog(
+                LogZprava.LOG_CHYBNE_ULOZENI.getZprava());
     }
 // </editor-fold>
 
@@ -183,13 +187,13 @@ public class KomponentPrikazy extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Veřejné Metody: Přepínače">
-public void zapniBtnGeneruj() { generujBtn.setDisable(false); }
-public void vypniBtnGeneruj() { generujBtn.setDisable(true); }
+    public void zapniBtnGeneruj() { generujBtn.setDisable(false); }
+    public void vypniBtnGeneruj() { generujBtn.setDisable(true); }
 
-public void zapniBtnNacti() { nactiCb.setDisable(false); }
-public void vypniBtnNacti() { nactiCb.setDisable(true); }
+    public void zapniBtnNacti() { nactiCb.setDisable(false); }
+    public void vypniBtnNacti() { nactiCb.setDisable(true); }
 
-public void zapniBtnUloz() { ulozBtn.setDisable(false); }
-public void vypniBtnUloz() { ulozBtn.setDisable(true); }
+    public void zapniBtnUloz() { ulozBtn.setDisable(false); }
+    public void vypniBtnUloz() { ulozBtn.setDisable(true); }
 // </editor-fold>
 }

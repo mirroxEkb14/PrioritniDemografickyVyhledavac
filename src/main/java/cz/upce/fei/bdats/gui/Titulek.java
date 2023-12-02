@@ -34,7 +34,7 @@ public enum Titulek {
     HLAVICKA_TITULKOVEHO_PANELU_ODEBIRANI("Zadávání názvu obce"),
     KOMPONENT_PRIKAZY("Příkazy"),
     BTN_GENERUJ("Generuj"),
-    CB_NACTI("Načtí"),
+    CB_NACTI("Načti"),
     CB_VZOR("vzor.csv"),
     CB_KRAJE("kraje.csv"),
     CB_ULOZISTE("uložiště.csv"),

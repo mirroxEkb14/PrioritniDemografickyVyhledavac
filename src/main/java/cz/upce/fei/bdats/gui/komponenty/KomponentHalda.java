@@ -8,10 +8,14 @@ import cz.upce.fei.bdats.gui.dialogy.*;
 import cz.upce.fei.bdats.gui.kontejnery.MrizkovyPanel;
 import cz.upce.fei.bdats.gui.kontejnery.TitulkovyPanel;
 import cz.upce.fei.bdats.gui.kontejnery.Tlacitko;
+import cz.upce.fei.bdats.gui.koreny.ISeznamPanel;
 import cz.upce.fei.bdats.gui.koreny.SeznamPanel;
 import cz.upce.fei.bdats.gui.tvurce.TvurceObce;
+import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.strom.ETypProhl;
 import cz.upce.fei.bdats.vyjimky.zpravy.LogZprava;
+import cz.upce.fei.bdats.halda.IAbstrHeap;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -22,13 +26,28 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 // </editor-fold>
 
+/**
+ * Třída implementuje sadu operací pro <i>ovládání</i> tlačítek, jež pracují se základními operacemi prioritní
+ * fronty
+ *
+ * <p> Třída je vzorem <b>Singleton</b>
+ *
+ * <p> Rozšiřuje třídu {@link TitulkovyPanel}
+ *
+ * @see IAbstrHeap
+ */
 public final class KomponentHalda extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     private final Button vybudujBtn, reorganizujBtn, vlozBtn, odeberMaxBtn, prazdnostBtn, zrusBtn, zpristupniMaxBtn;
-
     private final ChoiceBox<String> vypisCb = new ChoiceBox<>();
-    final BiConsumer<String, String> tvurceCbIteratoru = (t, u) -> {
+
+    private final ISeznamPanel<Obec> seznamPanel = SeznamPanel.getInstance();
+
+    /**
+     * Soukromá konstanta reprezentuje funkční rozhraní, jež vytvoří novou instanci výběrového pole {@link ChoiceBox}
+     */
+    private final BiConsumer<String, String> tvurceCbIteratoru = (t, u) -> {
         this.vypisCb.getItems().clear();
 
         if (t == null || t.isEmpty())
@@ -46,10 +65,9 @@ public final class KomponentHalda extends TitulkovyPanel {
         this.vypisCb.setOnAction(actionEvent -> nastavUdalostVypsani());
     };
 
-    private final SeznamPanel seznamPanel = SeznamPanel.getInstance();
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Instance a Tovární Metoda">
+// <editor-fold defaultstate="collapsed" desc="Instance a Tovární metoda">
     private static KomponentHalda instance;
 
     public static KomponentHalda getInstance() {
@@ -60,9 +78,6 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Nastavení třídy">
-    /**
-     * Privátní konstruktor inicializující tlačítka a nastavující události
-     */
     private KomponentHalda() {
         this.vybudujBtn = new Tlacitko(Titulek.BTN_VYBUDUJ.nadpis());
         this.vybudujBtn.setOnAction(actionEvent -> nastavUdalostVybudovani());
@@ -97,9 +112,6 @@ public final class KomponentHalda extends TitulkovyPanel {
         nastavKomponentHaldy();
     }
 
-    /**
-     * Nastavuje vzhled a chování komponenty stromu představující sadu základích operací nad stromem
-     */
     private void nastavKomponentHaldy() {
         this.setText(
                 Titulek.KOMPONENT_HALDA.nadpis());
@@ -107,9 +119,9 @@ public final class KomponentHalda extends TitulkovyPanel {
     }
 
     /**
-     * Vrací mřížkový panel s umístěnými tlačítky
+     * Vytvoří a vrátí mřížkový panel {@link GridPane}
      *
-     * @return Mřížkový panel {@link GridPane} s tlačítky a výchozím nastavením
+     * @return Instace {@link MrizkovyPanel}
      */
     private @NotNull GridPane dejGridPane() {
         final GridPane gridPane = new MrizkovyPanel();
@@ -131,7 +143,7 @@ public final class KomponentHalda extends TitulkovyPanel {
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Action: vloz(Comparator<Obec> komp)">
+// <editor-fold defaultstate="collapsed" desc="Action: reorganizuj(Comparator<Obec> komp)">
     private void nastavUdalostReorganizovani() {
 
     }
@@ -155,7 +167,8 @@ public final class KomponentHalda extends TitulkovyPanel {
                                 obnovTlacitkaProVlozeni();
                             },
                             () -> ErrorAlert.nahlasErrorLog(
-                                    LogZprava.LOG_TVORENI_SPATNA_POLE.getZprava()));
+                                    LogZprava.SPATNA_POLE.getZprava()));
+
         }
     }
 
@@ -196,7 +209,7 @@ public final class KomponentHalda extends TitulkovyPanel {
         if (jeVybranaAkceProProhlizeni(zvolenaAkce)) {
             final ETypProhl typ = dejVybranyTyp(zvolenaAkce);
             seznamPanel.vypisHaldu(typ);
-            provedObnoveniTlacitekSirkaHloubka();
+            obnovTlacitkaProIterator();
         } else if (jeVybranaAkceProVraceni(zvolenaAkce)) {
             seznamPanel.schovejHaldu();
             obnovTlacitkaProVrat();
@@ -205,7 +218,7 @@ public final class KomponentHalda extends TitulkovyPanel {
         }
     }
 
-    private void provedObnoveniTlacitekSirkaHloubka() {
+    private void obnovTlacitkaProIterator() {
         vypniBtnVybuduj();
         vypniBtnReorganizuj();
         vypniBtnVloz();
@@ -240,11 +253,11 @@ public final class KomponentHalda extends TitulkovyPanel {
     }
 
     /**
-     * Zjišťuje, zda je zadaná položka určena pro prohlížení stromu
+     * Zjišťuje, zda je daná položka určena pro prohlížení haldy
      *
      * @param polozka Zvolená položka v {@link ChoiceBox}
      *
-     * @return {@code true}, pokud je položka pro prohlížení, jinak {@code false}
+     * @return {@code true} pokud je položka pro prohlížení <i>(šířka/hloubka)</i>, jinak {@code false} <i>(vrať)</i>
      */
     private boolean jeVybranaAkceProProhlizeni(String polozka) {
         return Titulek.CB_SIRKA.nadpis().equalsIgnoreCase(polozka)
@@ -256,7 +269,7 @@ public final class KomponentHalda extends TitulkovyPanel {
      *
      * @param polozka Zvolená položka v {@link ChoiceBox}
      *
-     * @return Typ prohlížení na základě zvolené položky
+     * @return Typ prohlížení
      *
      * @see ETypProhl
      */
@@ -266,11 +279,11 @@ public final class KomponentHalda extends TitulkovyPanel {
     }
 
     /**
-     * Zjišťuje, zda je zadaná položka určena pro návrat v rámci stromu
+     * Zjišťuje, zda je daná položka určena pro návrat
      *
      * @param polozka Zvolená položka v {@link ChoiceBox}
      *
-     * @return {@code true}, pokud je položka pro návrat, jinak {@code false}
+     * @return {@code true} pokud je položka pro návrat <i>(vrať)</i>, jinak {@code false} <i>(šířka/hloubka)</i>
      */
     private boolean jeVybranaAkceProVraceni(String polozka) {
         return Titulek.CB_VRAT.nadpis().equalsIgnoreCase(polozka);
@@ -278,9 +291,6 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Action: jePrazdna()">
-    /**
-     * Zobrazí informační dialogové okénko s aktuálním počtem prvků v rámci seznamu
-     */
     private void nastavUdalostPrazdnosti() {
         InfoAlert.nahlasInfoLog(
                 String.valueOf(seznamPanel.mohutnost()));
@@ -288,11 +298,21 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Action: zrus()">
-    /**
-     * Zruší všechny položky seznamu
-     */
     private void nastavUdalostZruseni() {
         seznamPanel.vyprazdni();
+        obnovTlacitkaProZruseni();
+    }
+
+    private void obnovTlacitkaProZruseni() {
+        if (jeVypnutoBtnVloz()) zapniBtnVloz();
+
+        vypniBtnReorganizuj();
+        vypniBtnZpristupniMax();
+        vypniBtnOdeberMax();
+        vypniBtnPrazdnost();
+        vypniBtnZrus();
+        vypniBtnVypis();
+        KomponentPrikazy.getInstance().vypniBtnUloz();
     }
 // </editor-fold>
 
@@ -308,28 +328,28 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Veřejné Metody: Přepínače">
-public void zapniBtnVybuduj() { vybudujBtn.setDisable(false); }
-public void vypniBtnVybuduj() { vybudujBtn.setDisable(true); }
+    public void zapniBtnVybuduj() { vybudujBtn.setDisable(false); }
+    public void vypniBtnVybuduj() { vybudujBtn.setDisable(true); }
 
-public void zapniBtnReorganizuj() { reorganizujBtn.setDisable(false); }
-public void vypniBtnReorganizuj() { reorganizujBtn.setDisable(true); }
+    public void zapniBtnReorganizuj() { reorganizujBtn.setDisable(false); }
+    public void vypniBtnReorganizuj() { reorganizujBtn.setDisable(true); }
 
-public void zapniBtnVloz() { vlozBtn.setDisable(false); }
-public void vypniBtnVloz() { vlozBtn.setDisable(true); }
+    public void zapniBtnVloz() { vlozBtn.setDisable(false); }
+    public void vypniBtnVloz() { vlozBtn.setDisable(true); }
 
-public void zapniBtnOdeberMax() { odeberMaxBtn.setDisable(false); }
-public void vypniBtnOdeberMax() { odeberMaxBtn.setDisable(true); }
+    public void zapniBtnOdeberMax() { odeberMaxBtn.setDisable(false); }
+    public void vypniBtnOdeberMax() { odeberMaxBtn.setDisable(true); }
 
-public void zapniBtnVypis() { vypisCb.setDisable(false); }
-public void vypniBtnVypis() { vypisCb.setDisable(true); }
+    public void zapniBtnVypis() { vypisCb.setDisable(false); }
+    public void vypniBtnVypis() { vypisCb.setDisable(true); }
 
-public void zapniBtnPrazdnost() { prazdnostBtn.setDisable(false); }
-public void vypniBtnPrazdnost() { prazdnostBtn.setDisable(true); }
+    public void zapniBtnPrazdnost() { prazdnostBtn.setDisable(false); }
+    public void vypniBtnPrazdnost() { prazdnostBtn.setDisable(true); }
 
-public void zapniBtnZrus() { zrusBtn.setDisable(false); }
-public void vypniBtnZrus() { zrusBtn.setDisable(true); }
+    public void zapniBtnZrus() { zrusBtn.setDisable(false); }
+    public void vypniBtnZrus() { zrusBtn.setDisable(true); }
 
-public void zapniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(false); }
-public void vypniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(true); }
+    public void zapniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(false); }
+    public void vypniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(true); }
 // </editor-fold>
 }

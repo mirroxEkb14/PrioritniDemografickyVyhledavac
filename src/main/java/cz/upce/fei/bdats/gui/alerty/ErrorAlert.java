@@ -15,8 +15,8 @@ import java.util.function.Consumer;
 public final class ErrorAlert extends Alert {
 
     /**
-     * Statická soukromá konstanta vytváří nový alert typu {@link AlertType#ERROR} a zobrazuje ho uživateli se
-     * zprávou o chybě
+     * Statická soukromá konstanta reprezentující funkční rozhraní vytváří nový alert typu {@link AlertType#ERROR}
+     * a zobrazuje ho uživateli se zprávou o chybě
      */
     private static final Consumer<String> errorLog = t -> {
         final Alert chyboveOkenko = new ErrorAlert(t);

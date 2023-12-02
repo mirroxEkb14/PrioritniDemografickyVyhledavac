@@ -15,8 +15,8 @@ import java.util.function.Consumer;
 public final class InfoAlert extends Alert {
 
     /**
-     * Statická soukromá konstanta vytváří nový alert typu {@link AlertType#INFORMATION} a zobrazuje ho uživateli s
-     * informační zprávou
+     * Statická soukromá konstanta reprezentující funkční rozhraní vytváří nový alert typu {@link AlertType#INFORMATION}
+     * a zobrazuje ho uživateli s informační zprávou
      */
     private static final Consumer<String> infoLog = t -> {
         final Alert infoOkenko = new InfoAlert(t);
