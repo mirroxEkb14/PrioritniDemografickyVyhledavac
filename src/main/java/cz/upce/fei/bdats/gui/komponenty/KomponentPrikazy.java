@@ -123,7 +123,7 @@ public class KomponentPrikazy extends TitulkovyPanel {
                 obnovTlacitkaGeneratorNacteni();
             } catch (NumberFormatException | CeleKladneCisloException ex) {
                 ErrorAlert.nahlasErrorLog(
-                        LogZprava.LOG_GENERATOR_SPATNY_POCET.getZprava());
+                        LogZprava.CHYBA_GENERATORU_SPATNY_POCET.getZprava());
             }
         }
     }
@@ -133,15 +133,24 @@ public class KomponentPrikazy extends TitulkovyPanel {
         if (Titulek.CB_VZOR.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_VZOR))
                 ErrorAlert.nahlasErrorLog(
-                        LogZprava.LOG_NACTENI_VZORU.getZprava());
+                        LogZprava.CHYBA_NACTENI_VZORU.getZprava());
+            else
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_NACTENI_VZORU.getZprava());
         } else if (Titulek.CB_KRAJE.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_KRAJE))
                 ErrorAlert.nahlasErrorLog(
-                        LogZprava.LOG_NACTENI_KRAJE.getZprava());
+                        LogZprava.CHYBA_NACTENI_KRAJE.getZprava());
+            else
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_NACTENI_KRAJE.getZprava());
         } else if (Titulek.CB_ULOZISTE.nadpis().equalsIgnoreCase(zvolenaPolozka)) {
             if (!seznamPanel.nacti(IPerzistence.CESTA_ULOZISTE))
                 ErrorAlert.nahlasErrorLog(
-                        LogZprava.LOG_NACTENI_ULOZISTE.getZprava());
+                        LogZprava.CHYBA_NACTENI_ULOZISTE.getZprava());
+            else
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_NACTENI_ULOZISTE.getZprava());
         }
         this.nactiCb.getSelectionModel().select(Titulek.CB_NACTI.nadpis());
         obnovTlacitkaGeneratorNacteni();
@@ -169,14 +178,14 @@ public class KomponentPrikazy extends TitulkovyPanel {
     private void nastavUdalostUlozeni() {
         if (seznamPanel.uloz()) {
             InfoAlert.nahlasInfoLog(
-                    LogZprava.LOG_USPESNE_ULOZENI.getZprava());
+                    LogZprava.INFO_ULOZENI.getZprava());
             tvurceCbNacteni.accept(
                     Titulek.CB_VZOR.nadpis(),
                     Titulek.CB_KRAJE.nadpis());
             return;
         }
         ErrorAlert.nahlasErrorLog(
-                LogZprava.LOG_CHYBNE_ULOZENI.getZprava());
+                LogZprava.CHYBA_ULOZENI.getZprava());
     }
 // </editor-fold>
 

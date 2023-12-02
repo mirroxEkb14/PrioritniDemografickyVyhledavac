@@ -90,16 +90,31 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     public void vybuduj(E[] pole) throws HeapException {
         pozadatNeprazdnePole(pole);
 
-        this.halda = (E[]) Array.newInstance(typPrvku, pole.length);
         this.kapacita = pole.length;
-        this.mohutnost = pole.length;
+        this.mohutnost = dejPocetPrvku(pole);
+        this.halda = (E[]) Array.newInstance(typPrvku, pole.length);
+
+        // pole -> [5, 3, 1]           | [5, 3, 1, null, null, null, null, null, null, null, null]
+        // halda -> [null, null, null] | [null, null, null, null, null, null, null, null, null, null, null]
 
         System.arraycopy(pole, 0, halda, 0, pole.length);
+
+        // pole -> [5, 3, 1]  | [5, 3, 1, null, null, null, null, null, null, null, null]
+        // halda -> [5, 3, 1] | [5, 3, 1, null, null, null, null, null, null, null, null]
 
         final int pulka = pole.length / 2;
         for (int i = pulka - 1; i >= 0; i--) {
             probublejPulku(i, pulka);
         }
+    }
+
+    private int dejPocetPrvku(E @NotNull [] pole) {
+        int pocet = 0;
+        for (E prvek: pole) {
+            if (prvek != null)
+                pocet++;
+        }
+        return pocet;
     }
 // </editor-fold>
 
@@ -108,11 +123,11 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     public void reorganizuj(Comparator<E> komp) throws HeapException {
         pozadatNePrazdnyKomparator(komp);
 
-        final E[] kopieHaldy = (E[]) new Object[mohutnost];
-        System.arraycopy(halda, 0, kopieHaldy, 0, kopieHaldy.length);
+//        final E[] kopieHaldy = (E[]) Array.newInstance(typPrvku, mohutnost);
+//        System.arraycopy(halda, 0, kopieHaldy, 0, kopieHaldy.length);
 
         this.komparator = komp;
-        vybuduj(kopieHaldy);
+        vybuduj(halda);
     }
 // </editor-fold>
 
@@ -138,8 +153,8 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     @Override
     public Iterator<E> vytvorIterator(ETypProhl typ) {
         return switch (typ) {
-            case SIRKA -> new SirkaIterator();
-            case HLOUBKA -> new HloubkaIterator();
+            case SIRKA -> new PFSirkaIterator();
+            case HLOUBKA -> new PFHloubkaIterator();
         };
     }
 // </editor-fold>
@@ -202,7 +217,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      *
      * <p> Popis jednotlivých bloků kódu:
      * <ol>
-     * <li> <b>final E maxPrvek = (E) halda[0]</b>: Uloží prvek s nejvyšší prioritou (je vždy na začátku pole)
+     * <li> <b>final E maxPrvek = halda[0]</b>: Uloží prvek s nejvyšší prioritou (je vždy na začátku pole)
      * <li> Nahrazuje první prvek posledním a sníží mohutnost:
      *      <ul>
      *      <li> <b>halda[0] = halda[mohutnost - 1]</b>
@@ -215,7 +230,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     public E odeberMax() throws HeapException {
         pozadatNePrazdnouHaldu();
 
-        final E maxPrvek = (E) halda[0];
+        final E maxPrvek = halda[0];
         halda[0] = halda[--mohutnost];
         probublejDolu();
 
@@ -227,7 +242,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     @Override
     public E zpristupniMax() throws HeapException {
         pozadatNePrazdnouHaldu();
-        return (E) halda[0];
+        return halda[0];
     }
 // </editor-fold>
 
@@ -240,16 +255,16 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         final Iterator<E> iterator = vytvorIterator(typ);
         while (iterator.hasNext()) {
             final E prvek = iterator.next();
-            sb.append(prvek).append(", ");
+            sb.append(prvek).append("\n");
         }
-        sb.replace(sb.length() - 2,
+        sb.replace(sb.length() - 1,
                 sb.length(),
                 "");
         return sb.toString();
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Soukromá třída: Iterátor do šířky (BFS)">
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída (BVS): Iterátor do šířky (BFS)">
     /**
      * Strategie <b>Breadth-First Traversal</b>/<b>Level-Order Traversal</b> prochází stromové/hierarchické struktury
      * postupně na jedné úrovni před tím, než se přesune na další úroveň
@@ -259,8 +274,10 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      *
      * <p> Používá pomocnou datovou strukturu <u>fronta</u> <i>(eng. Queue)</i> uchovávající indexy prvků, jež zatím
      * nebyly zpracovány
+     *
+     * <p> <b>Poznámka</b>: Prihlídka je založena na stejném principu, jako u ADS <b>binární vyhledávací strom</b>
      */
-    private class SirkaIterator implements Iterator<E> {
+    private class BVSSirkaIterator implements Iterator<E> {
 
         /**
          * Instanční proměnná uchovává indexy prvků haldy
@@ -269,8 +286,11 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
 
         /**
          * Konstruktor inicializuje frontu a vloží index kořene {@code (0)} na konec fronty
+         *
+         * <p> <b>Poznámka</b>: Nezpracovává výjimku <b>catch (FifoException ignored) {}</b>, protože vstupní
+         * data {@code (0)} nejsou nidky {@code null}
          */
-        public SirkaIterator() {
+        public BVSSirkaIterator() {
             this.frontaIndexu = new AbstrFifo<>();
             try {
                 frontaIndexu.vlozNaKonec(0);
@@ -278,9 +298,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         }
 
         @Override
-        public boolean hasNext() {
-            return !frontaIndexu.jePrazdna();
-        }
+        public boolean hasNext() { return !frontaIndexu.jePrazdna(); }
 
         /**
          * Odebere prvek a vrátí z přední části fronty (korespondující s aktuálním prvkem) a získá index levého a
@@ -295,7 +313,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
                         FifoZprava.PRAZDNA_FRONTA.zprava());
             try {
                 final int aktualniIndex = frontaIndexu.odeberZeZacatku();
-                final E aktualniPrvek = (E) halda[aktualniIndex];
+                final E aktualniPrvek = halda[aktualniIndex];
 
                 int indexLevehoSyna = indexLevehoSyna(aktualniIndex);
                 if (indexLevehoSyna < mohutnost())
@@ -307,13 +325,14 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
                 }
                 return aktualniPrvek;
             } catch (FifoException ex) {
-                throw new NoSuchElementException();
+                throw new NoSuchElementException(
+                        FifoZprava.PRAZDNA_FRONTA.zprava());
             }
         }
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Soukromá třída: Iterátor do hloubky, in-order (DFS)">
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída (BVS): Iterátor do hloubky, in-order (DFS)">
     /**
      * Taktika <b>in-order Depth-First Traversal</b> v kontextu <u>binární haldy</u>/<u>prioritní fronty</u>
      * (kde platí pravidlo, že každý uzel má nejvýše dva syny) znamená, že postupně prochází levým synem až do konce,
@@ -322,8 +341,10 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      *
      * <p> Pro implementaci strategie je využitá pomocná datová struktura <u>zásobník</u> <i>(eng. Stack)</i> zejména
      * jako výstupní soustava, tzn. udržuje aktuální stav průchod a následující kroky
+     *
+     * <p> <b>Poznámka</b>: Prohlídka je založena na stejném principu, jako u ADS <b>binární vyhledávací strom</b>
      */
-    private class HloubkaIterator implements Iterator<E> {
+    private class BVSHloubkaIterator implements Iterator<E> {
 
         /**
          * Instanční proměnná udržuje indexy prvků prioritní haldy
@@ -333,13 +354,16 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         /**
          * Konstruktor inicializuje zásobník a přidává kořenový uzel do zásobníku
          */
-        public HloubkaIterator() {
+        public BVSHloubkaIterator() {
             this.zasobnikIndexu = new AbstrLifo<>();
             pridejDoZasobniku(0);
         }
 
         /**
          * Přidává uzly od daného indexu směrem vlevo do zásobníku
+         *
+         * <p> <b>Poznámka</b>: Nezpracovává výjimku <b>catch (LifoException ignored) {}</b>, protože vstupní
+         * data {@code (index)} nejsou nidky {@code null}
          *
          * @param index Index, od něhož se začne postup
          *
@@ -372,11 +396,99 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
                         LifoZprava.PRAZDNY_ZASOBNIK.zprava());
             try {
                 final int aktualniIndex = zasobnikIndexu.odeberZeZacatku();
-                final E aktualniPrvek = (E) halda[aktualniIndex];
+                final E aktualniPrvek = halda[aktualniIndex];
 
                 final int pravyIndex = indexPravehoSyna(aktualniIndex);
                 if (pravyIndex < mohutnost())
                     pridejDoZasobniku(pravyIndex);
+                return aktualniPrvek;
+            } catch (LifoException ex) {
+                throw new NoSuchElementException(
+                        LifoZprava.PRAZDNY_ZASOBNIK.zprava());
+            }
+        }
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída (Prioritní Fronta): Iterátor do šířky (BFS)">
+    /**
+     * @see BVSSirkaIterator
+     */
+    private class PFSirkaIterator implements Iterator<E> {
+
+        private int aktualniIndex;
+
+        public PFSirkaIterator() {
+            this.aktualniIndex = 0;
+        }
+
+        @Override
+        public boolean hasNext() { return aktualniIndex < mohutnost; }
+
+        @Override
+        public E next() {
+            if (!hasNext())
+                throw new NoSuchElementException(
+                        FifoZprava.PRAZDNA_FRONTA.zprava());
+            return halda[aktualniIndex++];
+        }
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Soukromá třída (Prioritní Fronta): Iterátor do hloubky, in-order (DFS)">
+    /**
+     * Strategie průchodu binárním stromem:
+     * <ul>
+     * <li> <b>In-order</b>: Nejprve se zpracovává levý podstrom, poté aktuální uzel a nakonec pravý podstrom - vrátí
+     * posloupnost ve <i>vzestupně uspořádaném pořadí</i>
+     * <li> <b>Pre-order</b>: Nejprve se zpracovává aktuální uzel, poté levý podstrom a nakonec pravý podstrom -
+     * umožňuje rychlý přístup k vrcholům stromu
+     * <li> <b>Post-order</b>: Nejprve se zpracovává levý podstrom, poté pravý podstrom a nakonec aktuální uzel -
+     * zpracovává všechny potomky uzlu před samotným uzlem
+     * </ul>
+     *
+     * <p> U této implementace dochází k používání principu <b>pre-order</b>. Jelikož <b>prioritní fronta</b> nemá tu
+     * vlastnost, jež má ADT <b>tabulka</b>, tzn. nemá na abstraktní úrovni definovaný příznak <b>klíču</b>
+     * představující unikátní identifikátor prvku, není zapotřebí implementovat prohlídku do hloubky typu <b>in-order</b>
+     * umožňující vytvořit lineární uspořádání prvků podle hodnoty klíče, ale prohlídku typu <b>pre-order</b>
+     * <i>(před-přehled)</i>, kde dochází k návštěvě nejprve kořenového uzlu, poté jeho levého podstromu a
+     * nakonec pravého podstromu
+     *
+     * @see BVSHloubkaIterator
+     */
+    private class PFHloubkaIterator implements Iterator<E> {
+
+        private final IAbstrLifo<Integer> zasobnikIndexu;
+
+        /**
+         * Konstruktor inicializuje zásobník a vloží do něho index kořene {@code (0)}
+         */
+        public PFHloubkaIterator() {
+            this.zasobnikIndexu = new AbstrLifo<>();
+            if (mohutnost > 0)
+                zasobnikIndexu.vlozNaZacatek(0);
+        }
+
+        @Override
+        public boolean hasNext() { return !zasobnikIndexu.jePrazdny(); }
+
+        @Override
+        public E next() {
+            if (!hasNext())
+                throw new NoSuchElementException(
+                        LifoZprava.PRAZDNY_ZASOBNIK.zprava());
+            try {
+                final int aktualniIndex = zasobnikIndexu.odeberZeZacatku();
+                final E aktualniPrvek = halda[aktualniIndex];
+
+                final int indexPravehoSyna = indexPravehoSyna(aktualniIndex);
+                if (indexPravehoSyna < mohutnost)
+                    zasobnikIndexu.vlozNaZacatek(indexPravehoSyna);
+
+                final int indexLevehoSyna = indexLevehoSyna(aktualniIndex);
+                if (indexLevehoSyna < mohutnost)
+                    zasobnikIndexu.vlozNaZacatek(indexLevehoSyna);
+
                 return aktualniPrvek;
             } catch (LifoException ex) {
                 throw new NoSuchElementException(
@@ -525,7 +637,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         int aktualniIndex = mohutnost - 1;
         while (jePredek(aktualniIndex) &&
                 komparator.compare(predek(aktualniIndex),
-                                   (E) halda[aktualniIndex]) < 0) {
+                                   halda[aktualniIndex]) < 0) {
             vymen(indexPredka(aktualniIndex), aktualniIndex);
             aktualniIndex = indexPredka(aktualniIndex);
         }
@@ -546,13 +658,13 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
             int nejvetsiIndex = aktualniIndex;
 
             if (levyIndex < mohutnost() &&
-                    komparator.compare((E) halda[levyIndex],
-                                       (E) halda[nejvetsiIndex]) > 0)
+                    komparator.compare(halda[levyIndex],
+                                       halda[nejvetsiIndex]) > 0)
                 nejvetsiIndex = levyIndex;
 
             if (pravyIndex < mohutnost() &&
-                    komparator.compare((E) halda[pravyIndex],
-                                       (E) halda[nejvetsiIndex]) > 0)
+                    komparator.compare(halda[pravyIndex],
+                                       halda[nejvetsiIndex]) > 0)
                 nejvetsiIndex = pravyIndex;
 
             if (nejvetsiIndex != aktualniIndex) {
@@ -577,13 +689,13 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
             int nejvetsiIndex = aktualniIndex;
 
             if (levyIndex <= (mohutnost - 1) &&
-                    komparator.compare((E) halda[levyIndex],
-                                       (E) halda[nejvetsiIndex]) > 0)
+                    komparator.compare(halda[levyIndex],
+                                       halda[nejvetsiIndex]) > 0)
                 nejvetsiIndex = levyIndex;
 
             if (pravyIndex <= (mohutnost - 1) &&
-                    komparator.compare((E) halda[pravyIndex],
-                                       (E) halda[nejvetsiIndex]) > 0)
+                    komparator.compare(halda[pravyIndex],
+                                       halda[nejvetsiIndex]) > 0)
                 nejvetsiIndex = pravyIndex;
 
             if (nejvetsiIndex != aktualniIndex) {
@@ -670,15 +782,15 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
      * Gettery pro předka a jeho syny
      */
     private E levySyn(int indexPredka) {
-        return (E) halda[indexLevehoSyna(indexPredka)];
+        return halda[indexLevehoSyna(indexPredka)];
     }
 
     private E pravySyn(int indexPredka) {
-        return (E) halda[indexPravehoSyna(indexPredka)];
+        return halda[indexPravehoSyna(indexPredka)];
     }
 
     private E predek(int indexSyna) {
-        return (E) halda[indexPredka(indexSyna)];
+        return halda[indexPredka(indexSyna)];
     }
 // </editor-fold>
 

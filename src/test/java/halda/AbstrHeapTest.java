@@ -442,13 +442,13 @@ public final class AbstrHeapTest {
             final int resMosutnost = intHalda.mohutnost();
             assertEquals(expMosutnost, resMosutnost);
 
-            final String expSirka = "7, 3, 6, 1, 2, 4, 5";
+            final String expSirka = "7\n3\n6\n1\n2\n4\n5";
             final String resSirka = intHalda.vypis(ETypProhl.SIRKA);
-            assertEquals(expSirka, resSirka); // -> "7, 3, 6, 1, 2, 4, 5"
+            assertEquals(expSirka, resSirka);
 
-            final String expHloubka = "1, 3, 2, 7, 4, 6, 5";
+            final String expHloubka = "7\n3\n1\n2\n6\n4\n5";
             final String resHloubka = intHalda.vypis(ETypProhl.HLOUBKA);
-            assertEquals(expHloubka, resHloubka); // -> "1, 3, 2, 7, 4, 6, 5"
+            assertEquals(expHloubka, resHloubka);
 
             final int expected1 = 7;
             final int result1 = intHalda.odeberMax();
@@ -531,11 +531,11 @@ public final class AbstrHeapTest {
             Integer[] intPole = new Integer[]{13, 11, 12, 8, 9, 10, 7, 1, 2, 5, 4, 3, 6, 14, 15, 16, 17};
             intHalda.vybuduj(intPole); // -> [17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1]
 
-            final String expIntSirka = "17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1";
+            final String expIntSirka = "17\n16\n15\n13\n9\n10\n14\n11\n2\n5\n4\n3\n6\n12\n7\n8\n1";
             final String resIntSirka = intHalda.vypis(ETypProhl.SIRKA);
             assertEquals(expIntSirka, resIntSirka);
 
-            final String expHloubka = "8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7";
+            final String expHloubka = "17\n16\n13\n11\n8\n1\n2\n9\n5\n4\n15\n10\n3\n6\n14\n12\n7";
             final String resHloubka = intHalda.vypis(ETypProhl.HLOUBKA);
             assertEquals(expHloubka, resHloubka);
 
@@ -543,11 +543,11 @@ public final class AbstrHeapTest {
             String[] strPole = new String[]{"m", "k", "l", "h", "i", "j", "g", "a", "b", "e", "d", "c", "f", "n", "o", "p", "q"};
             strHalda.vybuduj(strPole); // -> [q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a]
 
-            final String expSirka = "q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a";
+            final String expSirka = "q\np\no\nm\ni\nj\nn\nk\nb\ne\nd\nc\nf\nl\ng\nh\na";
             final String resSirka = strHalda.vypis(ETypProhl.SIRKA);
             assertEquals(expSirka, resSirka);
 
-            final String expStrHloubka = "h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g";
+            final String expStrHloubka = "q\np\nm\nk\nh\na\nb\ni\ne\nd\no\nj\nc\nf\nn\nl\ng";
             final String resStrHloubka = strHalda.vypis(ETypProhl.HLOUBKA);
             assertEquals(expStrHloubka, resStrHloubka);
 

@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Comparator;
 // </editor-fold>
 
 /**
@@ -27,7 +28,25 @@ import java.util.Collection;
 public interface ISeznamPanel<E> {
 
     /**
-     * Vloží instanci objektu do seznamu {@link ListView} a DS prioritní fronta
+     * Vybuduje prioritní frontu podle požadovaného pole prvků
+     *
+     * @param pole Pole prvků
+     *
+     * @throws SeznamPanelException Když se vystaví {@link AgendaKrajException}
+     */
+    void vybuduj(E[] pole) throws SeznamPanelException;
+
+    /**
+     * Reorganizuje prioritní frontu podle nového kritéria priority
+     *
+     * @param komp Komparátor pro porovnávání prvků haldy
+     *
+     * @throws SeznamPanelException Když se vystaví {@link AgendaKrajException}
+     */
+    void reorganizuj(Comparator<E> komp) throws SeznamPanelException;
+
+    /**
+     * Vloží instanci objektu do DS prioritní fronta
      *
      * @param prvek Instance na objekt, jenž bude vložen do seznamu a DS
      *
@@ -86,18 +105,16 @@ public interface ISeznamPanel<E> {
     void vyprazdni();
 
     /**
-     * Uloží aktuální stav seznamu {@link ListView}, vyčistí ho a vrátí posloupnost prvků prioritní fronty
+     * Uloží aktuální stav seznamu {@link ListView}, vyčistí ho a vypíše posloupnost prvků prioritní fronty
      * podle v určitém pořadí v textové podobě
      *
      * @param typ Typ prohlížení
-     *
-     * @return Textový řetězec reprezentující posloupnost prvků haldy v určitém pořadí
      *
      * @throws SeznamPanelException Když se vystaví výjimka {@link AgendaKrajException}
      *
      * @see IAgendaKraj#vypis(ETypProhl)
      */
-    String vypisHaldu(ETypProhl typ) throws SeznamPanelException;
+    void vypisHaldu(ETypProhl typ) throws SeznamPanelException;
 
     /**
      * Vyčistí seznam {@link ListView} zobrazující posloupnost haldy a přidá všechny prvky z uložiště do seznamu
@@ -107,7 +124,7 @@ public interface ISeznamPanel<E> {
     void schovejHaldu();
 
     /**
-     * Načte objekty do seznamu {@link ListView}, resp. do DS prioritní fronta
+     * Načte objekty do DS prioritní fronta
      *
      * @param cesta Cesta k souboru
      *

@@ -24,4 +24,7 @@
 2.3 Posloupnost výpisu do šířky:                                 |   3.3 Posloupnost výpisu do šířky:
     17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1    |       q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a
 2.4 Posloupnost výpisu do hloubky (in-order):                    |   3.4 Posloupnost výpisu do hloubky (in-order):
+    2.4.1 Prioritní fronta:                                      |       3.4.1 Prioritní fronta:
+    17, 16, 13, 11, 8, 1, 2, 9, 5, 4, 15, 10, 3, 6, 14, 12, 7    |       q, p, m, k, h, a, b, i, e, d, o, j, c, f, n, l, g
+    2.4.2 Binární vyhledávací strom:                             |       3.4.2 Binární vyhledávací strom:
     8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7    |       h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g

@@ -24,6 +24,10 @@ public final class ObecPerzistence implements IPerzistence<Obec> {
      */
     @Override
     public boolean nactiCsv(IAbstrHeap<Obec> halda, String cesta) throws IOException {
+        final int pocetObci = this.dejPocetRadku(cesta);
+        final Obec[] pole = new Obec[pocetObci];
+        int citac = 0;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(cesta))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -44,11 +48,13 @@ public final class ObecPerzistence implements IPerzistence<Obec> {
                             pocetMuzu,
                             pocetZen,
                             celkem);
-                    halda.vloz(obec);
+                    pole[citac] = obec;
+                    citac++;
                 } else {
                     return false;
                 }
             }
+            halda.vybuduj(pole);
         } catch (ObecException | HeapException ex) {
             return false;
         }

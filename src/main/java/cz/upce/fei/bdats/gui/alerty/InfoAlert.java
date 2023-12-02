@@ -27,7 +27,7 @@ public final class InfoAlert extends Alert {
         super(AlertType.INFORMATION);
 
         this.setTitle("Informační Alert"); // titulek
-        this.setHeaderText("Požadovaný údaj"); // záhlaví
+        this.setHeaderText("Info"); // záhlaví
         this.setContentText(zprava);
     }
 

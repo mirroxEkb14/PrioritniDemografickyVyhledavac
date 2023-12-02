@@ -3,7 +3,9 @@ package cz.upce.fei.bdats.perzistence;
 // <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -85,5 +87,24 @@ public interface IPerzistence<E> {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Vrátí počet řádků v daném souboru s příponou {@code .csv}
+     *
+     * @param cesta Casta k {@code .csv} souboru
+     *
+     * @return Celkový počet řádků v daném {@code .csv} souboru
+     *
+     * @throws IOException Když se vysstaví i/o chyba při čtení souboru
+     */
+    default int dejPocetRadku(String cesta) throws IOException {
+        int pocitadlo = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(cesta))) {
+            while (reader.readLine() != null) {
+                pocitadlo++;
+            }
+        }
+        return pocitadlo;
     }
 }

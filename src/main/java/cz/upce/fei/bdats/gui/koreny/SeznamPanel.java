@@ -12,6 +12,7 @@ import cz.upce.fei.bdats.vyjimky.zpravy.SeznamPanelZprava;
 import javafx.scene.control.ListView;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
 import java.util.Iterator;
 // </editor-fold>
 
@@ -38,10 +39,29 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     private SeznamPanel() { this.nastavSeznamPanel(this); }
 
     @Override
+    public void vybuduj(Obec[] pole) throws SeznamPanelException {
+        try {
+            agendaKraj.vybuduj(pole);
+        } catch (SeznamPanelException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_VSTUP_POLE.getZprava());
+        }
+    }
+
+    @Override
+    public void reorganizuj(Comparator<Obec> komp) throws SeznamPanelException {
+        try {
+            agendaKraj.reorganizuj(komp);
+        } catch (AgendaKrajException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_VSTUP_KOMPARATORU.getZprava());
+        }
+    }
+
+    @Override
     public void vloz(Obec obec) throws SeznamPanelException {
         try {
             agendaKraj.vloz(obec);
-            pridej(obec);
         } catch (AgendaKrajException ex) {
             throw new SeznamPanelException(
                     SeznamPanelZprava.PRAZDNY_VSTUP_OBCE.getZprava());
@@ -53,7 +73,7 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
         try {
             agendaKraj.generuj(pocet);
             zrusSeznamPanel();
-            pridejHalduDoSeznamu();
+            pridejHalduDoSeznamu(ETypProhl.SIRKA);
         } catch (CeleKladneCisloException ex) {
             throw new SeznamPanelException(
                     SeznamPanelZprava.NEPLATNE_CELE_CISLO.getZprava());
@@ -83,11 +103,11 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     }
 
     @Override
-    public String vypisHaldu(ETypProhl typ) throws SeznamPanelException {
+    public void vypisHaldu(ETypProhl typ) throws SeznamPanelException {
         try {
             ulozAktualniStav();
             zrusSeznamPanel();
-            return agendaKraj.vypis(typ);
+            pridejHalduDoSeznamu(typ);
         } catch (AgendaKrajException ex) {
             throw new SeznamPanelException(
                     SeznamPanelZprava.PRAZDNY_VSTUP_TYPU.getZprava());
@@ -99,11 +119,7 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
 
     @Override
     public boolean nacti(String cesta) {
-        if (agendaKraj.nacti(cesta)) {
-            pridejHalduDoSeznamu();
-            return true;
-        }
-        return false;
+        return agendaKraj.nacti(cesta);
     }
 
     @Override
@@ -113,8 +129,7 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     /**
      * @param obec Instance obce pro vložení do seznamu {@link ListView}
      *
-     * @see SeznamPanel#vloz(Obec)
-     * @see SeznamPanel#pridejHalduDoSeznamu()
+     * @see SeznamPanel#pridejHalduDoSeznamu(ETypProhl)
      */
     private void pridej(@NotNull Obec obec) {
         this.getItems().add(obec);
@@ -157,8 +172,8 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
      * @see SeznamPanel#obnovSeznam(int)
      * @see SeznamPanel#nacti(String)
      */
-    private void pridejHalduDoSeznamu() {
-        final Iterator<Obec> iterator = agendaKraj.vytvorIterator(ETypProhl.HLOUBKA);
+    private void pridejHalduDoSeznamu(ETypProhl typ) {
+        final Iterator<Obec> iterator = agendaKraj.vytvorIterator(typ);
         while (iterator.hasNext()) {
             pridej(iterator.next());
         }

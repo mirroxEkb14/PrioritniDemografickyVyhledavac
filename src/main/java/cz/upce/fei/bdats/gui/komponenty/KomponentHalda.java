@@ -157,7 +157,7 @@ public final class KomponentHalda extends TitulkovyPanel {
             final String klic = dialog.getTfNazevObce().getText();
             if (klic.isEmpty()) {
                 ErrorAlert.nahlasErrorLog(
-                        LogZprava.LOG_TVORENI_PRAZDNY_KLIC.getZprava());
+                        LogZprava.CHYBA_TVURCE_PRAZDNY_KLIC.getZprava());
                 return;
             }
             new TvurceObce().vytvor(dialog)
@@ -165,9 +165,11 @@ public final class KomponentHalda extends TitulkovyPanel {
                             novaObec -> {
                                 seznamPanel.vloz(novaObec);
                                 obnovTlacitkaProVlozeni();
+                                InfoAlert.nahlasInfoLog(
+                                        LogZprava.INFO_VLOZENI.getZprava());
                             },
                             () -> ErrorAlert.nahlasErrorLog(
-                                    LogZprava.SPATNA_POLE.getZprava()));
+                                    LogZprava.CHYBA_SPATNA_POLE.getZprava()));
 
         }
     }
