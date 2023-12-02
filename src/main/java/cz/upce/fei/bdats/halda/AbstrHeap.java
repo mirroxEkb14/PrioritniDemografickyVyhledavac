@@ -94,13 +94,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         this.mohutnost = dejPocetPrvku(pole);
         this.halda = (E[]) Array.newInstance(typPrvku, pole.length);
 
-        // pole -> [5, 3, 1]           | [5, 3, 1, null, null, null, null, null, null, null, null]
-        // halda -> [null, null, null] | [null, null, null, null, null, null, null, null, null, null, null]
-
         System.arraycopy(pole, 0, halda, 0, pole.length);
-
-        // pole -> [5, 3, 1]  | [5, 3, 1, null, null, null, null, null, null, null, null]
-        // halda -> [5, 3, 1] | [5, 3, 1, null, null, null, null, null, null, null, null]
 
         final int pulka = pole.length / 2;
         for (int i = pulka - 1; i >= 0; i--) {
@@ -108,6 +102,18 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
         }
     }
 
+    /**
+     * Vrátí počet ne {@code null} prvků v daném poli
+     *
+     * <p> <b>Poznámka</b>: Tuto metodu by šlo implementovat jedním řádkem:
+     * <ul>
+     * <li> <b>return (int) Arrays.stream(pole).filter(Objects::nonNull).count();</b>
+     * </ul>
+     *
+     * @param pole Pole prvků
+     *
+     * @return Celkový počet obsazených míst v daném poli
+     */
     private int dejPocetPrvku(E @NotNull [] pole) {
         int pocet = 0;
         for (E prvek: pole) {
@@ -122,9 +128,6 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     @Override
     public void reorganizuj(Comparator<E> komp) throws HeapException {
         pozadatNePrazdnyKomparator(komp);
-
-//        final E[] kopieHaldy = (E[]) Array.newInstance(typPrvku, mohutnost);
-//        System.arraycopy(halda, 0, kopieHaldy, 0, kopieHaldy.length);
 
         this.komparator = komp;
         vybuduj(halda);

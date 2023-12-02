@@ -8,7 +8,6 @@ import cz.upce.fei.bdats.gui.koreny.PrikazPanel;
 public enum Titulek {
     KOMPONENT_HALDA("Prioritní fronta"),
     BTN_VYBUDUJ("Vybuduj"),
-    BTN_REORGANIZUJ("Reorganizuj"),
     BTN_VLOZ("Vlož"),
     BTN_ODEBER_MAX("OdeberMax"),
     BTN_ZPRISTUPNI_MAX("ZpřístupniMax"),
@@ -28,10 +27,6 @@ public enum Titulek {
     LABEL_ZENY("Počet žen: "),
     HLAVICKA_DIALOG_VLOZENI("Vytvoření Nové Obce"),
     HLAVICKA_TITULKOVEHO_PANELU_VLOZENI("Zadávání údajů"),
-    HLAVICKA_DIALOGU_NALEZENI("Nalezení Obcí"),
-    HLAVICKA_TITULKOVEHO_PANELU_NALEZENI("Zadávání názvu obce"),
-    HLAVICKA_DIALOGU_ODEBIRANI("Odebírání Obcí"),
-    HLAVICKA_TITULKOVEHO_PANELU_ODEBIRANI("Zadávání názvu obce"),
     KOMPONENT_PRIKAZY("Příkazy"),
     BTN_GENERUJ("Generuj"),
     CB_NACTI("Načti"),
@@ -41,7 +36,10 @@ public enum Titulek {
     LABEL_POCET_PRVKU("Počet: "),
     HLAVICKA_DIALOGU_GENERATOR("Generátor Obcí"),
     HLAVICKA_TITULKOVEHO_PANELU_GENERATORU("Zadávání počtu obcí"),
-    BTN_ULOZ("Ulož");
+    BTN_ULOZ("Ulož"),
+    CB_REORGANIZUJ("Reorganizuj"),
+    CB_POCET_OBYVATEL("Počet obyvetel"),
+    CB_NAZEV_OBCE("Název obce");
 
     private final String nadpis;
 

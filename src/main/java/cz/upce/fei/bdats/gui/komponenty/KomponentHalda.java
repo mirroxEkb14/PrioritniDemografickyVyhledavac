@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 // </editor-fold>
@@ -39,15 +40,38 @@ import java.util.function.BiConsumer;
 public final class KomponentHalda extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
-    private final Button vybudujBtn, reorganizujBtn, vlozBtn, odeberMaxBtn, prazdnostBtn, zrusBtn, zpristupniMaxBtn;
+    private final Button vybudujBtn, vlozBtn, odeberMaxBtn, prazdnostBtn, zrusBtn, zpristupniMaxBtn;
+    private final ChoiceBox<String> reorganizujCb = new ChoiceBox<>();
     private final ChoiceBox<String> vypisCb = new ChoiceBox<>();
 
     private final ISeznamPanel<Obec> seznamPanel = SeznamPanel.getInstance();
 
     /**
      * Soukromá konstanta reprezentuje funkční rozhraní, jež vytvoří novou instanci výběrového pole {@link ChoiceBox}
+     * pro {@code reorganizujCb}
      */
-    private final BiConsumer<String, String> tvurceCbIteratoru = (t, u) -> {
+    private final BiConsumer<String, String> tvurceCbReorganizace = (t, u) -> {
+        this.reorganizujCb.getItems().clear();
+
+        if (t == null || t.isEmpty())
+            this.reorganizujCb.getItems().addAll(
+                    Titulek.CB_REORGANIZUJ.nadpis(), u);
+        else if (u == null || u.isEmpty())
+            this.reorganizujCb.getItems().addAll(
+                    Titulek.CB_REORGANIZUJ.nadpis(), t);
+        else
+            this.reorganizujCb.getItems().addAll(
+                    Titulek.CB_REORGANIZUJ.nadpis(), t, u);
+
+        this.reorganizujCb.setPrefWidth(PREFEROVANA_SIRKA_POLE);
+        this.reorganizujCb.getSelectionModel().select(Titulek.CB_REORGANIZUJ.nadpis());
+        this.reorganizujCb.setOnAction(actionEvent -> nastavUdalostReorganizace());
+    };
+    /**
+     * Soukromá konstanta reprezentuje funkční rozhraní, jež vytvoří novou instanci výběrového pole {@link ChoiceBox}
+     * pro {@code vypisCb}
+     */
+    private final BiConsumer<String, String> tvurceCbVypisu = (t, u) -> {
         this.vypisCb.getItems().clear();
 
         if (t == null || t.isEmpty())
@@ -82,9 +106,10 @@ public final class KomponentHalda extends TitulkovyPanel {
         this.vybudujBtn = new Tlacitko(Titulek.BTN_VYBUDUJ.nadpis());
         this.vybudujBtn.setOnAction(actionEvent -> nastavUdalostVybudovani());
 
-        this.reorganizujBtn = new Tlacitko(Titulek.BTN_REORGANIZUJ.nadpis());
-        this.reorganizujBtn.setOnAction(actionEvent -> nastavUdalostReorganizovani());
-        this.reorganizujBtn.setDisable(true);
+        tvurceCbReorganizace.accept(
+                Titulek.CB_POCET_OBYVATEL.nadpis(),
+                Titulek.CB_NAZEV_OBCE.nadpis());
+        this.reorganizujCb.setDisable(true);
 
         this.vlozBtn = new Tlacitko(Titulek.BTN_VLOZ.nadpis());
         this.vlozBtn.setOnAction(actionEvent -> nastavUdalostVlozeni());
@@ -93,7 +118,7 @@ public final class KomponentHalda extends TitulkovyPanel {
         this.odeberMaxBtn.setDisable(true);
         this.odeberMaxBtn.setOnAction(actionEvent -> nastavUdalostOdebirani());
 
-        tvurceCbIteratoru.accept(
+        tvurceCbVypisu.accept(
                 Titulek.CB_SIRKA.nadpis(),
                 Titulek.CB_HLOUBKA.nadpis());
         this.vypisCb.setDisable(true);
@@ -108,6 +133,7 @@ public final class KomponentHalda extends TitulkovyPanel {
 
         this.zpristupniMaxBtn = new Tlacitko(Titulek.BTN_ZPRISTUPNI_MAX.nadpis());
         this.zpristupniMaxBtn.setDisable(true);
+        this.zpristupniMaxBtn.setOnAction(actionEvent -> nastavUdalostZpristupnovani());
 
         nastavKomponentHaldy();
     }
@@ -126,7 +152,7 @@ public final class KomponentHalda extends TitulkovyPanel {
     private @NotNull GridPane dejGridPane() {
         final GridPane gridPane = new MrizkovyPanel();
         gridPane.add(vybudujBtn, MrizkovyPanel.SLOUPCOVY_INDEX_PRVNI, MrizkovyPanel.RADKOVY_INDEX_PRVNI);
-        gridPane.add(reorganizujBtn, MrizkovyPanel.SLOUPCOVY_INDEX_DRUHY, MrizkovyPanel.RADKOVY_INDEX_PRVNI);
+        gridPane.add(reorganizujCb, MrizkovyPanel.SLOUPCOVY_INDEX_DRUHY, MrizkovyPanel.RADKOVY_INDEX_PRVNI);
         gridPane.add(vlozBtn, MrizkovyPanel.SLOUPCOVY_INDEX_PRVNI, MrizkovyPanel.RADKOVY_INDEX_DRUHY);
         gridPane.add(odeberMaxBtn, MrizkovyPanel.SLOUPCOVY_INDEX_DRUHY, MrizkovyPanel.RADKOVY_INDEX_DRUHY);
         gridPane.add(prazdnostBtn, MrizkovyPanel.SLOUPCOVY_INDEX_PRVNI, MrizkovyPanel.RADKOVY_INDEX_TRETI);
@@ -144,8 +170,58 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Action: reorganizuj(Comparator<Obec> komp)">
-    private void nastavUdalostReorganizovani() {
+    private void nastavUdalostReorganizace() {
+        final String zvolenaAkce = reorganizujCb.getSelectionModel().getSelectedItem();
+        if (jeVybranaAkceProReorganizaci(zvolenaAkce)) {
+            if (podlePoctuObyvatel(zvolenaAkce)) {
+                final Comparator<Obec> kompPoctu = Comparator.comparingInt(Obec::getCelkem);
+                seznamPanel.reorganizuj(kompPoctu);
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_REORGANIZACE_PODLE_POCTU.getZprava());
+            } else if (podleNazvuObce(zvolenaAkce)) {
+                final Comparator<Obec> kompNazvu = Comparator.comparing(Obec::getNazevObce);
+                seznamPanel.reorganizuj(kompNazvu);
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_REORGANIZACE_PODLE_NAZVU.getZprava());
+            }
+        }
+        this.reorganizujCb.getSelectionModel().select(
+                Titulek.CB_REORGANIZUJ.nadpis());
+    }
 
+    /**
+     * Zjišťuje, zda je daná položka určena pro reorganizaci haldy
+     *
+     * @param polozka Zvolená položka v {@link ChoiceBox}
+     *
+     * @return {@code true} pokud je položka pro reorganizaci <i>(pole počtu obyvatel/názvu obce)</i>, jinak
+     * {@code false} <i>(reorganizuj)</i>
+     */
+    private boolean jeVybranaAkceProReorganizaci(String polozka) {
+        return Titulek.CB_POCET_OBYVATEL.nadpis().equalsIgnoreCase(polozka)
+                || Titulek.CB_NAZEV_OBCE.nadpis().equalsIgnoreCase(polozka);
+    }
+
+    /**
+     * Zjistí, zda uživatel zvolil reorganozaci podle počtu obyvatel
+     *
+     * @param polozka Zvolená položka v {@link ChoiceBox}
+     *
+     * @return {@code true} pokud podle počtu obyvatel, jinak {@code false}
+     */
+    private boolean podlePoctuObyvatel(@NotNull String polozka) {
+        return polozka.equalsIgnoreCase(Titulek.CB_POCET_OBYVATEL.nadpis());
+    }
+
+    /**
+     * Zjistí, zda uživatel zvolil reorganozaci podle názvu obce
+     *
+     * @param polozka Zvolená položka v {@link ChoiceBox}
+     *
+     * @return {@code true} pokud podle názvu obce, jinak {@code false}
+     */
+    private boolean podleNazvuObce(@NotNull String polozka) {
+        return polozka.equalsIgnoreCase(Titulek.CB_NAZEV_OBCE.nadpis());
     }
 // </editor-fold>
 
@@ -176,11 +252,11 @@ public final class KomponentHalda extends TitulkovyPanel {
 
     private void obnovTlacitkaProVlozeni() {
         if (jeVypnutoBtnVybuduj()) zapniBtnVybuduj();
-        if (jeVypnutoBtnReprganizuj()) zapniBtnReorganizuj();
+        if (jeVypnutoCbReprganizuj()) zapniCbReorganizuj();
         if (jeVypnutoBtnOdeberMax()) zapniBtnOdeberMax();
         if (jeVypnutoBtnPrazdnost()) zapniBtnPrazdnost();
         if (jeVypnutoBtnZrus()) zapniBtnZrus();
-        if (jeVypnutoBtnVypis()) zapniBtnVypis();
+        if (jeVypnutoCbVypis()) zapniCbVypis();
         if (jeVypnutoBtnZpristupniMax()) zapniBtnZpristupniMax();
         if (KomponentPrikazy.getInstance().jeVypnutoBtnUloz())
             KomponentPrikazy.getInstance().zapniBtnUloz();
@@ -189,19 +265,32 @@ public final class KomponentHalda extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Action: odeberMax()">
     private void nastavUdalostOdebirani() {
-        seznamPanel.smazMax();
+        InfoAlert.nahlasInfoLog(
+                seznamPanel.odeberMax().toString());
         obnovTlacitkaProOdebirani();
     }
 
     private void obnovTlacitkaProOdebirani() {
-        if (seznamPanel.jePrazdny()) {
-            vypniBtnReorganizuj();
+        if (seznamPanel.jeHaldaPrazdna()) {
+            vypniCbReorganizuj();
             vypniBtnOdeberMax();
-            vypniBtnVypis();
+            vypniCbVypis();
             vypniBtnPrazdnost();
             vypniBtnZrus();
             KomponentPrikazy.getInstance().vypniBtnUloz();
         }
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Action: zpristupniMax()">
+    private void nastavUdalostZpristupnovani() {
+        if (seznamPanel.jeHaldaPrazdna()) {
+            ErrorAlert.nahlasErrorLog(
+                    LogZprava.CHYBA_ZPRISTUPNOVANI.getZprava());
+            return;
+        }
+        InfoAlert.nahlasInfoLog(
+                seznamPanel.zpristupniMax().toString());
     }
 // </editor-fold>
 
@@ -222,34 +311,34 @@ public final class KomponentHalda extends TitulkovyPanel {
 
     private void obnovTlacitkaProIterator() {
         vypniBtnVybuduj();
-        vypniBtnReorganizuj();
+        vypniCbReorganizuj();
         vypniBtnVloz();
         vypniBtnOdeberMax();
         vypniBtnPrazdnost();
         vypniBtnZrus();
         vypniBtnZpristupniMax();
         KomponentPrikazy.getInstance().vypniBtnGeneruj();
-        KomponentPrikazy.getInstance().vypniBtnNacti();
+        KomponentPrikazy.getInstance().vypniCbNacti();
         KomponentPrikazy.getInstance().vypniBtnUloz();
 
-        tvurceCbIteratoru.accept(
+        tvurceCbVypisu.accept(
                 Titulek.CB_VRAT.nadpis(),
                 null);
     }
 
     private void obnovTlacitkaProVrat() {
         zapniBtnVybuduj();
-        zapniBtnReorganizuj();
+        zapniCbReorganizuj();
         zapniBtnVloz();
         zapniBtnOdeberMax();
         zapniBtnPrazdnost();
         zapniBtnZrus();
-        vypniBtnZpristupniMax();
+        zapniBtnZpristupniMax();
         KomponentPrikazy.getInstance().zapniBtnGeneruj();
-        KomponentPrikazy.getInstance().zapniBtnNacti();
+        KomponentPrikazy.getInstance().zapniCbNacti();
         KomponentPrikazy.getInstance().zapniBtnUloz();
 
-        tvurceCbIteratoru.accept(
+        tvurceCbVypisu.accept(
                 Titulek.CB_SIRKA.nadpis(),
                 Titulek.CB_HLOUBKA.nadpis());
     }
@@ -295,7 +384,7 @@ public final class KomponentHalda extends TitulkovyPanel {
 // <editor-fold defaultstate="collapsed" desc="Action: jePrazdna()">
     private void nastavUdalostPrazdnosti() {
         InfoAlert.nahlasInfoLog(
-                String.valueOf(seznamPanel.mohutnost()));
+                String.valueOf(seznamPanel.mohutnostHaldy()));
     }
 // </editor-fold>
 
@@ -308,24 +397,24 @@ public final class KomponentHalda extends TitulkovyPanel {
     private void obnovTlacitkaProZruseni() {
         if (jeVypnutoBtnVloz()) zapniBtnVloz();
 
-        vypniBtnReorganizuj();
+        vypniCbReorganizuj();
         vypniBtnZpristupniMax();
         vypniBtnOdeberMax();
         vypniBtnPrazdnost();
         vypniBtnZrus();
-        vypniBtnVypis();
+        vypniCbVypis();
         KomponentPrikazy.getInstance().vypniBtnUloz();
     }
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Veřejné Metody: Kontrola stavu tlačítek">
     public boolean jeVypnutoBtnVybuduj() { return vybudujBtn.isDisabled(); }
-    public boolean jeVypnutoBtnReprganizuj() { return reorganizujBtn.isDisabled(); }
+    public boolean jeVypnutoCbReprganizuj() { return reorganizujCb.isDisabled(); }
     public boolean jeVypnutoBtnVloz() { return vlozBtn.isDisabled(); }
     public boolean jeVypnutoBtnOdeberMax() { return odeberMaxBtn.isDisabled(); }
     public boolean jeVypnutoBtnPrazdnost() { return prazdnostBtn.isDisabled(); }
     public boolean jeVypnutoBtnZrus() { return zrusBtn.isDisabled(); }
-    public boolean jeVypnutoBtnVypis() { return vypisCb.isDisabled(); }
+    public boolean jeVypnutoCbVypis() { return vypisCb.isDisabled(); }
     public boolean jeVypnutoBtnZpristupniMax() { return zpristupniMaxBtn.isDisabled(); }
 // </editor-fold>
 
@@ -333,8 +422,8 @@ public final class KomponentHalda extends TitulkovyPanel {
     public void zapniBtnVybuduj() { vybudujBtn.setDisable(false); }
     public void vypniBtnVybuduj() { vybudujBtn.setDisable(true); }
 
-    public void zapniBtnReorganizuj() { reorganizujBtn.setDisable(false); }
-    public void vypniBtnReorganizuj() { reorganizujBtn.setDisable(true); }
+    public void zapniCbReorganizuj() { reorganizujCb.setDisable(false); }
+    public void vypniCbReorganizuj() { reorganizujCb.setDisable(true); }
 
     public void zapniBtnVloz() { vlozBtn.setDisable(false); }
     public void vypniBtnVloz() { vlozBtn.setDisable(true); }
@@ -342,8 +431,8 @@ public final class KomponentHalda extends TitulkovyPanel {
     public void zapniBtnOdeberMax() { odeberMaxBtn.setDisable(false); }
     public void vypniBtnOdeberMax() { odeberMaxBtn.setDisable(true); }
 
-    public void zapniBtnVypis() { vypisCb.setDisable(false); }
-    public void vypniBtnVypis() { vypisCb.setDisable(true); }
+    public void zapniCbVypis() { vypisCb.setDisable(false); }
+    public void vypniCbVypis() { vypisCb.setDisable(true); }
 
     public void zapniBtnPrazdnost() { prazdnostBtn.setDisable(false); }
     public void vypniBtnPrazdnost() { prazdnostBtn.setDisable(true); }

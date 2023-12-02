@@ -21,7 +21,10 @@ public enum LogZprava {
     INFO_NACTENI_VZORU("Vzorová halda byla úspěšně načtena"),
     INFO_NACTENI_KRAJE("Soubor krajů byl úspěšně načten"),
     INFO_NACTENI_ULOZISTE("Data byla úspěšně načtena z uložiště"),
-    INFO_VLOZENI("Kraj byl úspěšně vložen");
+    INFO_VLOZENI("Kraj byl úspěšně vložen"),
+    INFO_REORGANIZACE_PODLE_POCTU("Halda byla reorganizována podle celkovému počtu obyvatel"),
+    INFO_REORGANIZACE_PODLE_NAZVU("Halda byla reorganizována podle názvu obce"),
+    CHYBA_ZPRISTUPNOVANI("Maximální prvek nebyl nelezen");
 
     private final String zprava;
 

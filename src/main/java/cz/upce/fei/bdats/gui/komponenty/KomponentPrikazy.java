@@ -157,16 +157,16 @@ public class KomponentPrikazy extends TitulkovyPanel {
     }
 
     private void obnovTlacitkaGeneratorNacteni() {
-        if(KomponentHalda.getInstance().jeVypnutoBtnReprganizuj())
-            KomponentHalda.getInstance().zapniBtnReorganizuj();
+        if(KomponentHalda.getInstance().jeVypnutoCbReprganizuj())
+            KomponentHalda.getInstance().zapniCbReorganizuj();
         if (KomponentHalda.getInstance().jeVypnutoBtnOdeberMax())
             KomponentHalda.getInstance().zapniBtnOdeberMax();
         if (KomponentHalda.getInstance().jeVypnutoBtnPrazdnost())
             KomponentHalda.getInstance().zapniBtnPrazdnost();
         if (KomponentHalda.getInstance().jeVypnutoBtnZrus())
             KomponentHalda.getInstance().zapniBtnZrus();
-        if (KomponentHalda.getInstance().jeVypnutoBtnVypis())
-            KomponentHalda.getInstance().zapniBtnVypis();
+        if (KomponentHalda.getInstance().jeVypnutoCbVypis())
+            KomponentHalda.getInstance().zapniCbVypis();
         if (KomponentHalda.getInstance().jeVypnutoBtnZpristupniMax())
             KomponentHalda.getInstance().zapniBtnZpristupniMax();
         if (this.jeVypnutoBtnUloz())
@@ -191,7 +191,7 @@ public class KomponentPrikazy extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Veřejné Metody: Kontrola Stavu Tlačítek">
     public boolean jeVypnutoBtnGeneruj() { return generujBtn.isDisabled(); }
-    public boolean jeVypnutoBtnNacti() { return nactiCb.isDisabled(); }
+    public boolean jeVypnutoCbNacti() { return nactiCb.isDisabled(); }
     public boolean jeVypnutoBtnUloz() { return ulozBtn.isDisabled(); }
 // </editor-fold>
 
@@ -199,8 +199,8 @@ public class KomponentPrikazy extends TitulkovyPanel {
     public void zapniBtnGeneruj() { generujBtn.setDisable(false); }
     public void vypniBtnGeneruj() { generujBtn.setDisable(true); }
 
-    public void zapniBtnNacti() { nactiCb.setDisable(false); }
-    public void vypniBtnNacti() { nactiCb.setDisable(true); }
+    public void zapniCbNacti() { nactiCb.setDisable(false); }
+    public void vypniCbNacti() { nactiCb.setDisable(true); }
 
     public void zapniBtnUloz() { ulozBtn.setDisable(false); }
     public void vypniBtnUloz() { ulozBtn.setDisable(true); }

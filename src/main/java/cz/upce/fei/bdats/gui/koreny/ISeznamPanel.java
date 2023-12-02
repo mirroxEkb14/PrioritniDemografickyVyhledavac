@@ -71,21 +71,31 @@ public interface ISeznamPanel<E> {
     /**
      * Odebere prvek s největší prioritou ze seznamu {@link ListView} a zároveň z DS binární halda
      *
+     * @return Odebraný prvek
+     *
      * @throws SeznamPanelException Když se vystaví výjimka {@link AgendaKrajException}
      *
-     * @see ObservableList#remove(Object)
      * @see IAgendaKraj#odeberMax()
      */
-    void smazMax() throws SeznamPanelException;
+    E odeberMax() throws SeznamPanelException;
 
     /**
-     * Zkontroluje, zda je seznam {@link ListView} prázdný
+     * Vrátí prvek s největší prioritou v rámci prioritní fronty
      *
-     * @return {@code true} pokud není seznam prázdný, jinak {@code false}
+     * @return Prvek s největší prioritou
      *
-     * @see ObservableList#isEmpty()
+     * @throws SeznamPanelException Když se vystaví výjimka {@link AgendaKrajException}
      */
-    boolean jePrazdny();
+    E zpristupniMax() throws SeznamPanelException;
+
+    /**
+     * Zkontroluje, zda je prioritní fronta prázdná
+     *
+     * @return {@code true} pokud není prioritní  prázdná, jinak {@code false}
+     *
+     * @see IAgendaKraj#jePrazdna()
+     */
+    boolean jeHaldaPrazdna();
 
     /**
      * Vrátí aktuální počet prvků v prioritní frontě
@@ -94,7 +104,7 @@ public interface ISeznamPanel<E> {
      *
      * @see IAgendaKraj#mohutnost()
      */
-    int mohutnost();
+    int mohutnostHaldy();
 
     /**
      * Zruší seznam {@link ListView} a zároveň DS prioritní frontu

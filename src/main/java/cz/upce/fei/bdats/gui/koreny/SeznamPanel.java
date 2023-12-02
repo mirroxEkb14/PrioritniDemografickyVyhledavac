@@ -81,9 +81,9 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     }
 
     @Override
-    public void smazMax() throws SeznamPanelException {
+    public Obec odeberMax() throws SeznamPanelException {
         try {
-            vymazPrvek(agendaKraj.odeberMax());
+            return agendaKraj.odeberMax();
         } catch (AgendaKrajException ex) {
             throw new SeznamPanelException(
                     SeznamPanelZprava.PRAZDNY_SEZNAM.getZprava());
@@ -91,10 +91,20 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     }
 
     @Override
-    public boolean jePrazdny() { return this.getItems().isEmpty(); }
+    public Obec zpristupniMax() throws SeznamPanelException {
+        try {
+            return agendaKraj.zpristupniMax();
+        } catch (AgendaKrajException ex) {
+            throw new SeznamPanelException(
+                    SeznamPanelZprava.PRAZDNY_SEZNAM.getZprava());
+        }
+    }
 
     @Override
-    public int mohutnost() { return agendaKraj.mohutnost(); }
+    public boolean jeHaldaPrazdna() { return agendaKraj.jePrazdna(); }
+
+    @Override
+    public int mohutnostHaldy() { return agendaKraj.mohutnost(); }
 
     @Override
     public void vyprazdni() {
@@ -133,15 +143,6 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
      */
     private void pridej(@NotNull Obec obec) {
         this.getItems().add(obec);
-    }
-
-    /**
-     * @param obec Instance obce pro smazání ze seznamu {@link ListView}
-     *
-     * @see SeznamPanel#smazMax()
-     */
-    private void vymazPrvek(@NotNull Obec obec) {
-        this.getItems().remove(obec);
     }
 
     /**
