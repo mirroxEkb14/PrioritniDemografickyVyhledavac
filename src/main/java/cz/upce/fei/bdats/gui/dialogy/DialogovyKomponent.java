@@ -39,7 +39,5 @@ public interface DialogovyKomponent {
      *
      * @return {@code true} pokud bylo stisknuto {@link ButtonType#OK}, jinak {@code false}
      */
-    default boolean jeTlacitkoOk(@NotNull ButtonType odpoved) {
-        return odpoved.getButtonData().isDefaultButton();
-    }
+    default boolean jeTlacitkoOk(@NotNull ButtonType odpoved) { return odpoved.getButtonData().isDefaultButton(); }
 }

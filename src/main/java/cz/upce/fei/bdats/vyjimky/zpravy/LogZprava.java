@@ -24,7 +24,11 @@ public enum LogZprava {
     INFO_VLOZENI("Kraj byl úspěšně vložen"),
     INFO_REORGANIZACE_PODLE_POCTU("Halda byla reorganizována podle celkovému počtu obyvatel"),
     INFO_REORGANIZACE_PODLE_NAZVU("Halda byla reorganizována podle názvu obce"),
-    CHYBA_ZPRISTUPNOVANI("Maximální prvek nebyl nelezen");
+    CHYBA_ZPRISTUPNOVANI("Maximální prvek nebyl nelezen"),
+    CHYBA_SPATNA_CISELNA_POSLOUPNOST("Špatně zadána číselná posloupnost celkového počtu mužů a žen"),
+    CHYBA_SPATNA_TEXTOVA_POSLOUPNOST("Špatně zadána textová posloupnost názvu obcí"),
+    INFO_VYBUDOVANI_PODLE_POCTU_OBYVATEL("Halda byla vybudována podle počtu obyvatel"),
+    INFO_VYBUDOVANI_PODLE_NAZVU_OBCE("Halda byla vybudována podle názvu obcí");
 
     private final String zprava;
 

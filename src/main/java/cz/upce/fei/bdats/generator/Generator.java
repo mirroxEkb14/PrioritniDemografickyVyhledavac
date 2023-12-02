@@ -50,4 +50,8 @@ public interface Generator<E> {
      * @throws CeleKladneCisloException Když je hodnota parametru {@code pocet} menší než {@code 0}
      */
     void generuj(IAbstrHeap<E> halda, int pocet) throws CeleKladneCisloException;
+
+    E generujPodlePoctu(int celkem);
+
+    E generujPodleNazvu(String nazevObce);
 }

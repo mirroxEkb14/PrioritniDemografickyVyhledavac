@@ -28,3 +28,20 @@
     17, 16, 13, 11, 8, 1, 2, 9, 5, 4, 15, 10, 3, 6, 14, 12, 7    |       q, p, m, k, h, a, b, i, e, d, o, j, c, f, n, l, g
     2.4.2 Binární vyhledávací strom:                             |       3.4.2 Binární vyhledávací strom:
     8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7    |       h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g
+                                                                 |
+3) Metoda vybuduj(). Posloupnost přidání (počty obyvatel):       |   4) Metoda vybuduj(). Posloupnost přidání (názvy obcí):
+3.1 Neupořádaná halda:                                           |   4.1 Neupořádaná halda:
+    [5, 2, 9, 1, 7]                                              |       [e, b, i, a, g]
+3.2 Uspořádaná halda:                                            |   4.2 Uspořádaná halda:
+    [9, 7, 5, 1, 2]                                              |       [i, g, e, a, b]
+                                                                 |
+                        9                                        |                         i
+                      /   \                                      |                       /   \
+                     7     5                                     |                      g     e
+                   /  \                                          |                     / \
+                  1    2                                         |                    a   b
+                                                                 |
+3.3 Posloupnost výpisu do šířky:                                 |   4.3 Posloupnost výpisu do šířky:
+    9, 7, 5, 1, 2                                                |       i, g, e, a, b
+3.4 Posloupnost výpisu do hloubky (pre-order):                   |   4.4 Posloupnost výpisu do hloubky (pre-order):
+    9, 7, 1, 2, 5                                                |       i, g, a, b, e

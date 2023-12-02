@@ -23,7 +23,7 @@ public final class DialogGeneratoru extends Dialog<ButtonType>
     private final Label lPocet;
 
     public DialogGeneratoru() {
-        this.tfPocet = new TextField("10");
+        this.tfPocet = new TextField("10"); // nápověda
         this.lPocet = new Label(Titulek.LABEL_POCET_PRVKU.nadpis());
 
         nastavDialog();
@@ -46,7 +46,8 @@ public final class DialogGeneratoru extends Dialog<ButtonType>
      */
     private @NotNull TitledPane dejTitulkovyPanel() {
         final TitledPane titulkovyPanel = new TitulkovyPanel();
-        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_GENERATORU.nadpis());
+        titulkovyPanel.setText(
+                Titulek.HLAVICKA_TITULKOVEHO_PANELU_GENERATORU.nadpis());
         titulkovyPanel.setContent(dejGridPane());
         return titulkovyPanel;
     }

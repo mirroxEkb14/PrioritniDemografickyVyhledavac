@@ -46,8 +46,11 @@ public final class DialogVlozeni extends Dialog<ButtonType>
     }
 
     private void nastavDialog() {
-        this.setTitle(Titulek.HLAVICKA_DIALOG_VLOZENI.nadpis());
-        this.setDialogPane(this.dejTlacitka(this.getDialogPane()));
+        this.setTitle(
+                Titulek.HLAVICKA_DIALOG_VLOZENI.nadpis());
+        this.setDialogPane(
+                this.dejTlacitka(
+                        this.getDialogPane()));
         this.getDialogPane().setContent(dejTitulkovyPanel());
     }
 
@@ -58,7 +61,8 @@ public final class DialogVlozeni extends Dialog<ButtonType>
      */
     private @NotNull TitledPane dejTitulkovyPanel() {
         final TitledPane titulkovyPanel = new TitulkovyPanel();
-        titulkovyPanel.setText(Titulek.HLAVICKA_TITULKOVEHO_PANELU_VLOZENI.nadpis());
+        titulkovyPanel.setText(
+                Titulek.HLAVICKA_TITULKOVEHO_PANELU_VLOZENI.nadpis());
         titulkovyPanel.setContent(dejGridPane());
         return titulkovyPanel;
     }

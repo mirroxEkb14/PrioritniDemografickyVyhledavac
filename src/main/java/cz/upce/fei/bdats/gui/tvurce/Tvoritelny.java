@@ -35,6 +35,26 @@ public interface Tvoritelny<T> {
     Optional<T> vytvor(DialogovyKomponent dialog);
 
     /**
+     * Vytvoří pole objektů typu {@link T}
+     *
+     * @param pritomnyAtribut Jeden z atributů objektu, jenž reprezentuje nejaké číslo a vytvořen nebude, ale bude
+     *                        předán jako je do nové instance
+     *
+     * @return Pole instancí objektů
+     */
+    T[] vytvorPodleCisla(String[] pritomnyAtribut);
+
+    /**
+     * Vytvoří pole objektů typu {@link T}
+     *
+     * @param pritomnyAtribut Jeden z atributů objektu, jenž reprezentuje textový řetězec a vytvořen nebude, ale bude
+     *                        předán jako je do nové instance
+     *
+     * @return Pole instancí objektů
+     */
+    T[] vytvorPodleTextu(String[] pritomnyAtribut);
+
+    /**
      * Převede zadaný řetězec na celé číslo pomocí validátoru {@link Tvoritelny#validator} pro ověření,
      * zda je vstupní řetězec platným celým kladným číslem
      *

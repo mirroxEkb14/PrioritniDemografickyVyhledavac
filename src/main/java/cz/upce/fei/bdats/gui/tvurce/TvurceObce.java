@@ -1,6 +1,8 @@
 package cz.upce.fei.bdats.gui.tvurce;
 
 // <editor-fold defaultstate="collapsed" desc="Importy">
+import cz.upce.fei.bdats.generator.Generator;
+import cz.upce.fei.bdats.generator.ObecGenerator;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.gui.dialogy.DialogVlozeni;
 import cz.upce.fei.bdats.gui.dialogy.DialogovyKomponent;
@@ -44,5 +46,33 @@ public final class TvurceObce implements Tvoritelny<Obec> {
         } catch (CeleKladneCisloException | PrazdnyRetezecException | ObecException ex) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * <b>Poznámka</b>: Nezpracovává výjimku <b>catch (NumberFormatException ignored) {}</b>, protože pole čísel
+     * musí být zkontrolováno před voláním této metody
+     */
+    @Override
+    public Obec @NotNull [] vytvorPodleCisla(String @NotNull [] celkovePocty) {
+        final Generator<Obec> generator = new ObecGenerator();
+        final Obec[] obce = new Obec[celkovePocty.length];
+        try {
+            for (int i = 0; i < celkovePocty.length; i++) {
+                final int pocet = Integer.parseInt(celkovePocty[i]);
+                obce[i] = generator.generujPodlePoctu(pocet);
+            }
+        } catch (NumberFormatException ignored) {}
+        return obce;
+    }
+
+    @Override
+    public Obec @NotNull [] vytvorPodleTextu(String @NotNull [] nazvyObci) {
+        final Generator<Obec> generator = new ObecGenerator();
+        final Obec[] obce = new Obec[nazvyObci.length];
+        for (int i = 0; i < nazvyObci.length; i++) {
+            final String nazev = nazvyObci[i];
+            obce[i] = generator.generujPodleNazvu(nazev);
+        }
+        return obce;
     }
 }

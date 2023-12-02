@@ -72,8 +72,6 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     public void obnovSeznam(int pocet) throws SeznamPanelException {
         try {
             agendaKraj.generuj(pocet);
-            zrusSeznamPanel();
-            pridejHalduDoSeznamu(ETypProhl.SIRKA);
         } catch (CeleKladneCisloException ex) {
             throw new SeznamPanelException(
                     SeznamPanelZprava.NEPLATNE_CELE_CISLO.getZprava());
@@ -146,7 +144,6 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     }
 
     /**
-     * @see SeznamPanel#obnovSeznam(int)
      * @see SeznamPanel#vyprazdni()
      * @see SeznamPanel#vypisHaldu(ETypProhl)
      * @see SeznamPanel#nactiPredchoziHaldu()
@@ -170,7 +167,6 @@ public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
     }
 
     /**
-     * @see SeznamPanel#obnovSeznam(int)
      * @see SeznamPanel#nacti(String)
      */
     private void pridejHalduDoSeznamu(ETypProhl typ) {

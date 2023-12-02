@@ -58,7 +58,7 @@ public interface ISeznamPanel<E> {
     void vloz(E prvek) throws SeznamPanelException;
 
     /**
-     * Přidá určitý počet instancí objektu do seznamu, resp. do DS prioritní fronta
+     * Přidá určitý počet instancí objektu do DS prioritní fronta
      *
      * @param pocet Počet instancí objektu
      *

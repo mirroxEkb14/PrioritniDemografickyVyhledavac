@@ -39,7 +39,13 @@ public enum Titulek {
     BTN_ULOZ("Ulož"),
     CB_REORGANIZUJ("Reorganizuj"),
     CB_POCET_OBYVATEL("Počet obyvetel"),
-    CB_NAZEV_OBCE("Název obce");
+    CB_NAZEV_OBCE("Název obce"),
+    LABEL_POLE_NAZVU_OBCE("Pole názvu obce: "),
+    LABEL_POLE_POCTU_OBYVATEL("Pole počtů obyvatel: "),
+    PROMPT_POLE_NAZVU_OBCE("e, b, i, a, g"),
+    PROMPT_POLE_POCTU_OBYVATEL("5, 2, 9, 1, 7"),
+    HLAVICKA_DIALOGU_VYBUDOVANI("Vybudování Pole Obcí"),
+    HLAVICKA_TITULKOVEHO_PANELU_VYBUDOVANI("Porovnávací Kritérium: ");
 
     private final String nadpis;
 

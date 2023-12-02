@@ -13,6 +13,8 @@ import cz.upce.fei.bdats.gui.koreny.SeznamPanel;
 import cz.upce.fei.bdats.gui.tvurce.TvurceObce;
 import cz.upce.fei.bdats.model.Obec;
 import cz.upce.fei.bdats.strom.ETypProhl;
+import cz.upce.fei.bdats.validatory.IntegerValidator;
+import cz.upce.fei.bdats.validatory.TextValidator;
 import cz.upce.fei.bdats.vyjimky.zpravy.LogZprava;
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 
@@ -45,6 +47,13 @@ public final class KomponentHalda extends TitulkovyPanel {
     private final ChoiceBox<String> vypisCb = new ChoiceBox<>();
 
     private final ISeznamPanel<Obec> seznamPanel = SeznamPanel.getInstance();
+    /**
+     * Soukromá konstanta uchovává aktuálně nastavený komparátor určující kritérium porovnávání prvků v prioritné
+     * frontě
+     *
+     * <p> Výchozím nastavením je {@link Titulek#CB_POCET_OBYVATEL}
+     */
+    private static Titulek aktualniKriterium = Titulek.CB_POCET_OBYVATEL;
 
     /**
      * Soukromá konstanta reprezentuje funkční rozhraní, jež vytvoří novou instanci výběrového pole {@link ChoiceBox}
@@ -164,8 +173,95 @@ public final class KomponentHalda extends TitulkovyPanel {
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Action: vybuduj(Obec pole[])">
-    private void nastavUdalostVybudovani() {
+    private static final String ODDELOVAC_POLE = ", ";
 
+    private void nastavUdalostVybudovani() {
+        final DialogVybudovani dialog = new DialogVybudovani();
+        final Optional<ButtonType> odpoved = dialog.showAndWait();
+        if (odpoved.isPresent() && dialog.jeTlacitkoOk(odpoved.get())) {
+            if (aktualniKriterium == Titulek.CB_POCET_OBYVATEL) {
+                final String posloupnost = dialog.getTfPole().getText();
+                if (jePlatnePoleCisel(posloupnost)) {
+                    final Obec[] pole = new TvurceObce().vytvorPodleCisla(
+                            dejPole(posloupnost));
+                    seznamPanel.vybuduj(pole);
+                    InfoAlert.nahlasInfoLog(
+                            LogZprava.INFO_VYBUDOVANI_PODLE_POCTU_OBYVATEL.getZprava());
+                    obnovTlacitkaProVybudovaniVlozeni();
+                    return;
+                }
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.CHYBA_SPATNA_CISELNA_POSLOUPNOST.getZprava());
+            } else if (aktualniKriterium == Titulek.CB_NAZEV_OBCE) {
+                final String posloupnost = dialog.getTfPole().getText();
+                if (jePlatnePoleTextu(posloupnost)) {
+                    final Obec[] pole = new TvurceObce().vytvorPodleTextu(
+                            dejPole(posloupnost));
+                    seznamPanel.vybuduj(pole);
+                    InfoAlert.nahlasInfoLog(
+                            LogZprava.INFO_VYBUDOVANI_PODLE_NAZVU_OBCE.getZprava());
+                    obnovTlacitkaProVybudovaniVlozeni();
+                    return;
+                }
+                ErrorAlert.nahlasErrorLog(
+                        LogZprava.CHYBA_SPATNA_TEXTOVA_POSLOUPNOST.getZprava());
+            }
+        }
+    }
+
+    private String[] dejPole(@NotNull String retezec) { return retezec.split(ODDELOVAC_POLE); }
+
+    /**
+     * Zjistí, zda uživatel zadal platné císelné pole pro celkové počty obyvatel obcí, tzn. jsou-li všechna
+     * čísla kladná a větší než {@code 0}, pak jsou-li rozdělené čárkou
+     *
+     * @param retezec Zadaná uživatelem posloupnost prvků
+     *
+     * @return {@code true} pokud je pole platné, jinak {@code false}
+     */
+    private boolean jePlatnePoleCisel(@NotNull String retezec) {
+        final IntegerValidator validator = new IntegerValidator();
+        final String[] pocty = retezec.split(ODDELOVAC_POLE);
+        try {
+            for (String strPocet : pocty) {
+                final int intPocet = Integer.parseInt(strPocet);
+                if (!validator.jeValidni(intPocet))
+                    return false;
+            }
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * Zjistí, zda uživatel zadal platné textové pole pro názvy obcí , tzn. nejsou-li všechny textové řetězce přázdné,
+     * pak jsou-li rozdělené čárkou
+     *
+     * @param retezec Zadaná uživatelem posloupnost prvků
+     *
+     * @return {@code true} pokud je pole platné, jinak {@code false}
+     */
+    private boolean jePlatnePoleTextu(@NotNull String retezec) {
+        final TextValidator validator = new TextValidator();
+        final String[] nazvy = retezec.split(ODDELOVAC_POLE);
+        for (String nazev : nazvy) {
+            if (!validator.jeValidni(nazev))
+                return false;
+        }
+        return true;
+    }
+
+    private void obnovTlacitkaProVybudovaniVlozeni() {
+        if (jeVypnutoBtnVybuduj()) zapniBtnVybuduj();
+        if (jeVypnutoCbReprganizuj()) zapniCbReorganizuj();
+        if (jeVypnutoBtnOdeberMax()) zapniBtnOdeberMax();
+        if (jeVypnutoBtnPrazdnost()) zapniBtnPrazdnost();
+        if (jeVypnutoBtnZrus()) zapniBtnZrus();
+        if (jeVypnutoCbVypis()) zapniCbVypis();
+        if (jeVypnutoBtnZpristupniMax()) zapniBtnZpristupniMax();
+        if (KomponentPrikazy.getInstance().jeVypnutoBtnUloz())
+            KomponentPrikazy.getInstance().zapniBtnUloz();
     }
 // </editor-fold>
 
@@ -174,11 +270,13 @@ public final class KomponentHalda extends TitulkovyPanel {
         final String zvolenaAkce = reorganizujCb.getSelectionModel().getSelectedItem();
         if (jeVybranaAkceProReorganizaci(zvolenaAkce)) {
             if (podlePoctuObyvatel(zvolenaAkce)) {
+                aktualniKriterium = Titulek.CB_POCET_OBYVATEL;
                 final Comparator<Obec> kompPoctu = Comparator.comparingInt(Obec::getCelkem);
                 seznamPanel.reorganizuj(kompPoctu);
                 InfoAlert.nahlasInfoLog(
                         LogZprava.INFO_REORGANIZACE_PODLE_POCTU.getZprava());
             } else if (podleNazvuObce(zvolenaAkce)) {
+                aktualniKriterium = Titulek.CB_NAZEV_OBCE;
                 final Comparator<Obec> kompNazvu = Comparator.comparing(Obec::getNazevObce);
                 seznamPanel.reorganizuj(kompNazvu);
                 InfoAlert.nahlasInfoLog(
@@ -240,7 +338,7 @@ public final class KomponentHalda extends TitulkovyPanel {
                     .ifPresentOrElse(
                             novaObec -> {
                                 seznamPanel.vloz(novaObec);
-                                obnovTlacitkaProVlozeni();
+                                obnovTlacitkaProVybudovaniVlozeni();
                                 InfoAlert.nahlasInfoLog(
                                         LogZprava.INFO_VLOZENI.getZprava());
                             },
@@ -248,18 +346,6 @@ public final class KomponentHalda extends TitulkovyPanel {
                                     LogZprava.CHYBA_SPATNA_POLE.getZprava()));
 
         }
-    }
-
-    private void obnovTlacitkaProVlozeni() {
-        if (jeVypnutoBtnVybuduj()) zapniBtnVybuduj();
-        if (jeVypnutoCbReprganizuj()) zapniCbReorganizuj();
-        if (jeVypnutoBtnOdeberMax()) zapniBtnOdeberMax();
-        if (jeVypnutoBtnPrazdnost()) zapniBtnPrazdnost();
-        if (jeVypnutoBtnZrus()) zapniBtnZrus();
-        if (jeVypnutoCbVypis()) zapniCbVypis();
-        if (jeVypnutoBtnZpristupniMax()) zapniBtnZpristupniMax();
-        if (KomponentPrikazy.getInstance().jeVypnutoBtnUloz())
-            KomponentPrikazy.getInstance().zapniBtnUloz();
     }
 // </editor-fold>
 
@@ -442,5 +528,9 @@ public final class KomponentHalda extends TitulkovyPanel {
 
     public void zapniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(false); }
     public void vypniBtnZpristupniMax() { zpristupniMaxBtn.setDisable(true); }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Gettery">
+    public static Titulek getAktualniKriterium() { return aktualniKriterium; }
 // </editor-fold>
 }

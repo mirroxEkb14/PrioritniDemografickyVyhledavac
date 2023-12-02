@@ -25,6 +25,14 @@ public final class ObecGenerator implements Generator<Obec> {
             "Kraj Vysocina", "Kralovehradecky", "Liberecky", "Moravskoslezsky", "Olomoucky", "Pardubicky",
             "Plzensky", "Stredocesky", "Ustecky", "Zlinsky"};
 
+// <editor-fold defaultstate="collapsed" desc="Metoda: void generuj(IAbstrHeap<Obec> halda, int pocet)">
+    /**
+     * <b>Poznámka</b>: Nezpracovává výjimky <b>catch (ObecException | HeapException ignored) {}</b>, protože:
+     * <ul>
+     * <li> Do konstruktoru obce jsou vždy předány pouze platné hodnoty
+     * <li> Hodnota atributu metody vložení prvku do halda je vždy platná
+     * </ul>
+     */
     @Override
     public void generuj(@NotNull IAbstrHeap<Obec> halda, int pocet) {
         try {
@@ -48,7 +56,62 @@ public final class ObecGenerator implements Generator<Obec> {
             } while (--pocet != 0);
         } catch (ObecException | HeapException ignored) {}
     }
+// </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Metoda: Obec generujPodlePoctu(int celkem)">
+    @Override
+    public @NotNull Obec generujPodlePoctu(int celkem) {
+        final int cisloKraje = generujNahodneCisloKraje();
+        return new Obec(cisloKraje,
+                generujNazevKraje(cisloKraje),
+                generujNahodnyNazevObce(),
+                generujNahodnePsc(cisloKraje),
+                dejPodilMuzu(celkem),
+                dejPodilZen(celkem),
+                celkem);
+    }
+
+    /**
+     * Vrátí 40% hodnoty proměnné {@code celkem}, což reprezentuje podíl mužů, přičemž se zaokrouhlí dolů
+     *
+     * @param celkem Celkový počet obyvatel v obci
+     *
+     * @return 40% hodnoty atributu
+     */
+    private int dejPodilMuzu(int celkem) {
+        return (int) Math.floor((celkem * 0.4));
+    }
+
+    /**
+     * Vrátí 60% hodnoty proměnné {@code celkem}, což reprezentuje podíl žen, přičemž se zaokrouhlí nahoru
+     *
+     * @param celkem Celkový počet obyvatel v obci
+     *
+     * @return 60% hodnoty atributu
+     */
+    private int dejPodilZen(int celkem) {
+        return (int) Math.ceil((celkem * 0.6));
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Metoda: Obec generujPodleNazvu(String nazevObce)">
+    @Override
+    public @NotNull Obec generujPodleNazvu(String nazevObce) {
+        final int cisloKraje = generujNahodneCisloKraje();
+        final int pocetMuzu = generujNahodnyPocet();
+        final int pocetZen = generujNahodnyPocet();
+
+        return new Obec(cisloKraje,
+                generujNazevKraje(cisloKraje),
+                nazevObce,
+                generujNahodnePsc(cisloKraje),
+                pocetMuzu,
+                pocetZen,
+                pocetMuzu + pocetZen);
+    }
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Privátní Metody">
     /**
      * Generuje náhodné číslo kraje od {@code 1} (včetně) do {@code 15} (vyloučeno)
      *
@@ -66,9 +129,7 @@ public final class ObecGenerator implements Generator<Obec> {
      *
      * @return Textový řetězec s názvem kraje
      */
-    private @NotNull String generujNazevKraje(int cisloKraje) {
-        return KRAJE[--cisloKraje];
-    }
+    private @NotNull String generujNazevKraje(int cisloKraje) { return KRAJE[--cisloKraje]; }
 
     /**
      * Generuje unikátní název obce tím, že projde celou prioritní fronty iterátorem a zkontroluje, zda
@@ -136,7 +197,6 @@ public final class ObecGenerator implements Generator<Obec> {
      *
      * @return Náhodné číslo reprezentující počet mužů/žen
      */
-    private int generujNahodnyPocet() {
-        return random.nextInt(Generator.POCET_LIDI_MAX);
-    }
+    private int generujNahodnyPocet() { return random.nextInt(Generator.POCET_LIDI_MAX); }
+// </editor-fold>
 }
