@@ -1,5 +1,6 @@
 package halda;
 
+// <editor-fold defaultstate="collapsed" desc="Importy">
 import cz.upce.fei.bdats.halda.AbstrHeap;
 import cz.upce.fei.bdats.halda.IAbstrHeap;
 import cz.upce.fei.bdats.strom.ETypProhl;
@@ -10,6 +11,7 @@ import org.junit.*;
 import java.util.Comparator;
 
 import static org.junit.Assert.*;
+// </editor-fold>
 
 /**
  * Testovací případy pro:

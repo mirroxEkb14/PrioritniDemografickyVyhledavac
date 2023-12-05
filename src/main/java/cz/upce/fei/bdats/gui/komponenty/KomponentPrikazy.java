@@ -37,7 +37,7 @@ import java.util.function.BiConsumer;
  * @see Generator
  * @see IPerzistence
  */
-public class KomponentPrikazy extends TitulkovyPanel {
+public final class KomponentPrikazy extends TitulkovyPanel {
 
 // <editor-fold defaultstate="collapsed" desc="Atributy/Instanční proměnné">
     private final Button generujBtn, ulozBtn;
@@ -121,6 +121,8 @@ public class KomponentPrikazy extends TitulkovyPanel {
                 final int pocet = Integer.parseInt(dialog.getTfNazevObce().getText());
                 seznamPanel.obnovSeznam(pocet);
                 obnovTlacitkaGeneratorNacteni();
+                InfoAlert.nahlasInfoLog(
+                        LogZprava.INFO_GENEROVANI.getZprava());
             } catch (NumberFormatException | CeleKladneCisloException ex) {
                 ErrorAlert.nahlasErrorLog(
                         LogZprava.CHYBA_GENERATORU_SPATNY_POCET.getZprava());

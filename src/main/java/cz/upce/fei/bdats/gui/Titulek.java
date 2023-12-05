@@ -42,8 +42,8 @@ public enum Titulek {
     CB_NAZEV_OBCE("Název obce"),
     LABEL_POLE_NAZVU_OBCE("Pole názvu obce: "),
     LABEL_POLE_POCTU_OBYVATEL("Pole počtů obyvatel: "),
-    PROMPT_POLE_NAZVU_OBCE("e, b, i, a, g"),
-    PROMPT_POLE_POCTU_OBYVATEL("5, 2, 9, 1, 7"),
+    PROMPT_POLE_NAZVU_OBCE("m, k, l, h, i, j, g, a, b, e, d, c, f, n, o, p, q"),
+    PROMPT_POLE_POCTU_OBYVATEL("13, 11, 12, 8, 9, 10, 7, 1, 2, 5, 4, 3, 6, 14, 15, 16, 17"),
     HLAVICKA_DIALOGU_VYBUDOVANI("Vybudování Pole Obcí"),
     HLAVICKA_TITULKOVEHO_PANELU_VYBUDOVANI("Porovnávací Kritérium: ");
 

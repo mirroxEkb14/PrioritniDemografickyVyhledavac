@@ -14,6 +14,7 @@ import java.util.function.Consumer;
  */
 public final class ErrorAlert extends Alert {
 
+// <editor-fold defaultstate="collapsed" desc="Privátní konstanty">
     /**
      * Statická soukromá konstanta reprezentující funkční rozhraní vytváří nový alert typu {@link AlertType#ERROR}
      * a zobrazuje ho uživateli se zprávou o chybě
@@ -23,11 +24,18 @@ public final class ErrorAlert extends Alert {
         chyboveOkenko.showAndWait();
     };
 
+    /**
+     * Soukromé konstanty reprezentují výchozí titulek, resp. záhlaví pro všechny chybové alerty
+     */
+    private static final String TITULEK = "Chybový Alert";
+    private static final String ZAHLAVI = "Chyba";
+// </editor-fold>
+
     public ErrorAlert(String zprava) {
         super(AlertType.ERROR);
 
-        this.setTitle("Chybový Alert"); // titulek
-        this.setHeaderText("Chyba"); // záhlaví
+        this.setTitle(TITULEK);
+        this.setHeaderText(ZAHLAVI);
         this.setContentText(zprava);
     }
 

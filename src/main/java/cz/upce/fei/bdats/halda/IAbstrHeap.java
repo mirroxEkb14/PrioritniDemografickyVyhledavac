@@ -94,7 +94,7 @@ public interface IAbstrHeap<E> {
     /**
      * Dynamická operace - odebírací metoda - <i>poll()</i>
      * <p>
-     * odebraní prvku z prioritní fronty s maximální prioritou (tj. z hlavičky)
+     * Odebraní prvku z prioritní fronty s maximální prioritou (tj. z hlavičky)
      *
      * @return Odkaz na odebraný prvek
      *

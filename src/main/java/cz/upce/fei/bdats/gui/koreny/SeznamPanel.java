@@ -23,7 +23,7 @@ import java.util.Iterator;
  * <p> Rozšiřuje třídu {@link ListView}
  * <p> Implementuje rozhraní {@link ISeznamPanel}
  */
-public class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
+public final class SeznamPanel extends ListView<Obec> implements ISeznamPanel<Obec> {
 
     private final IAgendaKraj<Obec> agendaKraj = AgendaKraj.getInstance();
     private final ListView<Obec> ulozenyStav = new ListView<>();

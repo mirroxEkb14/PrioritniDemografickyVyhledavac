@@ -194,7 +194,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     /**
      * Zdvojnásobí velikost pole, pokud se rovná celkocé kapacitě - <i>(eng. grow(int minCapacity))</i>
      *
-     * <p> Kopírování prvků <b>System.arraycopy(halda, NULA, novaHalda, NULA, mohutnost)</b>:
+     * <p> Kopírování prvků <b>System.arraycopy(halda, 0, novaHalda, 0, mohutnost)</b>:
      * <ol>
      * <li> <b>src</b>: Zdrojové pole, z něhož budou kopírovány prvky
      * <li> <b>srcPos</b>: Počáteční pozice v zdrojovém poli, odkud začne kopírování

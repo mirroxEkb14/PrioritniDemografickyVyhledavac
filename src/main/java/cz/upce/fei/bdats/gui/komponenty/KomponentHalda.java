@@ -180,33 +180,51 @@ public final class KomponentHalda extends TitulkovyPanel {
         final Optional<ButtonType> odpoved = dialog.showAndWait();
         if (odpoved.isPresent() && dialog.jeTlacitkoOk(odpoved.get())) {
             if (aktualniKriterium == Titulek.CB_POCET_OBYVATEL) {
-                final String posloupnost = dialog.getTfPole().getText();
-                if (jePlatnePoleCisel(posloupnost)) {
-                    final Obec[] pole = new TvurceObce().vytvorPodleCisla(
-                            dejPole(posloupnost));
-                    seznamPanel.vybuduj(pole);
-                    InfoAlert.nahlasInfoLog(
-                            LogZprava.INFO_VYBUDOVANI_PODLE_POCTU_OBYVATEL.getZprava());
-                    obnovTlacitkaProVybudovaniVlozeni();
-                    return;
-                }
-                ErrorAlert.nahlasErrorLog(
-                        LogZprava.CHYBA_SPATNA_CISELNA_POSLOUPNOST.getZprava());
+                vybudujPodlePoctuObyvatel(dialog);
             } else if (aktualniKriterium == Titulek.CB_NAZEV_OBCE) {
-                final String posloupnost = dialog.getTfPole().getText();
-                if (jePlatnePoleTextu(posloupnost)) {
-                    final Obec[] pole = new TvurceObce().vytvorPodleTextu(
-                            dejPole(posloupnost));
-                    seznamPanel.vybuduj(pole);
-                    InfoAlert.nahlasInfoLog(
-                            LogZprava.INFO_VYBUDOVANI_PODLE_NAZVU_OBCE.getZprava());
-                    obnovTlacitkaProVybudovaniVlozeni();
-                    return;
-                }
-                ErrorAlert.nahlasErrorLog(
-                        LogZprava.CHYBA_SPATNA_TEXTOVA_POSLOUPNOST.getZprava());
+                vybudujPodleNazvuObci(dialog);
             }
         }
+    }
+
+    /**
+     * Vybuduje prioritní frontu podle požadovaného pole prvků a kritéria definovaného pro počet obyvatel
+     *
+     * @param dialog Odkaz na dialog, z něhož dostane pole prvků
+     */
+    private void vybudujPodlePoctuObyvatel(@NotNull DialogVybudovani dialog) {
+        final String posloupnost = dialog.getTfPole().getText();
+        if (jePlatnePoleCisel(posloupnost)) {
+            final Obec[] pole = new TvurceObce().vytvorPodleCisla(
+                    dejPole(posloupnost));
+            seznamPanel.vybuduj(pole);
+            InfoAlert.nahlasInfoLog(
+                    LogZprava.INFO_VYBUDOVANI_PODLE_POCTU_OBYVATEL.getZprava());
+            obnovTlacitkaProVybudovaniVlozeni();
+            return;
+        }
+        ErrorAlert.nahlasErrorLog(
+                LogZprava.CHYBA_SPATNA_CISELNA_POSLOUPNOST.getZprava());
+    }
+
+    /**
+     * Vybuduje prioritní frontu podle požadovaného pole prvků a kritéria definovaného pro název obce
+     *
+     * @param dialog Instance dialogu, z něhož dostane pole prvků
+     */
+    private void vybudujPodleNazvuObci(@NotNull DialogVybudovani dialog) {
+        final String posloupnost = dialog.getTfPole().getText();
+        if (jePlatnePoleTextu(posloupnost)) {
+            final Obec[] pole = new TvurceObce().vytvorPodleTextu(
+                    dejPole(posloupnost));
+            seznamPanel.vybuduj(pole);
+            InfoAlert.nahlasInfoLog(
+                    LogZprava.INFO_VYBUDOVANI_PODLE_NAZVU_OBCE.getZprava());
+            obnovTlacitkaProVybudovaniVlozeni();
+            return;
+        }
+        ErrorAlert.nahlasErrorLog(
+                LogZprava.CHYBA_SPATNA_TEXTOVA_POSLOUPNOST.getZprava());
     }
 
     private String[] dejPole(@NotNull String retezec) { return retezec.split(ODDELOVAC_POLE); }

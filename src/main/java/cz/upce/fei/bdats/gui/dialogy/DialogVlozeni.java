@@ -27,8 +27,8 @@ public final class DialogVlozeni extends Dialog<ButtonType>
         this.tfNazevKraje = new TextField("Pardubicky");
         this.tfNazevObce = new TextField();
         this.tfPSC = new TextField("1");
-        this.tfPocetMuzu = new TextField("1");
-        this.tfPocetZen = new TextField("1");
+        this.tfPocetMuzu = new TextField();
+        this.tfPocetZen = new TextField();
         this.lCislo = new Label(
                 Titulek.LABEL_CISLO_KRAJE.nadpis());
         this.lNazevKraje = new Label(

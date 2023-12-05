@@ -28,7 +28,8 @@ public enum LogZprava {
     CHYBA_SPATNA_CISELNA_POSLOUPNOST("Špatně zadána číselná posloupnost celkového počtu mužů a žen"),
     CHYBA_SPATNA_TEXTOVA_POSLOUPNOST("Špatně zadána textová posloupnost názvu obcí"),
     INFO_VYBUDOVANI_PODLE_POCTU_OBYVATEL("Halda byla vybudována podle počtu obyvatel"),
-    INFO_VYBUDOVANI_PODLE_NAZVU_OBCE("Halda byla vybudována podle názvu obcí");
+    INFO_VYBUDOVANI_PODLE_NAZVU_OBCE("Halda byla vybudována podle názvu obcí"),
+    INFO_GENEROVANI("Obce byly úspěšně vygenerovány");
 
     private final String zprava;
 
