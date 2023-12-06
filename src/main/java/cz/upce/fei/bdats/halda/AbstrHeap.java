@@ -32,8 +32,7 @@ import java.util.NoSuchElementException;
  *
  * @see java.util.PriorityQueue
  *
- * @param <E> Generický parametr reprezentující budoucí datový typ prvků prioritní fronty, které musí být
- *        porovnatelné podle určité priority
+ * @param <E> Generický parametr reprezentující budoucí datový typ prvků prioritní fronty
  */
 public final class AbstrHeap<E> implements IAbstrHeap<E> {
 
@@ -413,7 +412,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Soukromá třída (Prioritní Fronta): Iterátor do šířky (BFS)">
+// <editor-fold defaultstate="collapsed" desc="Privátní třída (Prioritní Fronta): Iterátor do šířky (BFS)">
     /**
      * @see BVSSirkaIterator
      */
@@ -438,7 +437,7 @@ public final class AbstrHeap<E> implements IAbstrHeap<E> {
     }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Soukromá třída (Prioritní Fronta): Iterátor do hloubky, in-order (DFS)">
+// <editor-fold defaultstate="collapsed" desc="Privátní třída (Prioritní Fronta): Iterátor do hloubky, in-order (DFS)">
     /**
      * Strategie průchodu binárním stromem:
      * <ul>
