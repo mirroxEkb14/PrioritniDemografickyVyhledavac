@@ -1,0 +1,47 @@
+
+1) Indexovaná anglická abeceda:
+   a, b, c, d, e, f, g, h, i,  j,  k,  l,  m,  n,  o,  p,  q,  r,  s,  t,  u,  v,  w,  x,  y,  z
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+
+2) Posloupnost přidání (počty obyvatel):                         |   3) Posloupnost přidání (názvy obcí):
+2.1 Neupořádaná halda:                                           |   3.1 Neupořádaná halda:
+    [13, 11, 12, 8, 9, 10, 7, 1, 2, 5, 4, 3, 6, 14, 15, 16, 17]  |       [m, k, l, h, i, j, g, a, b, e, d, c, f, n, o, p, q]
+2.2 Uspořádaná halda:                                            |   3.2 Uspořádaná halda:
+    [17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1]  |       [q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a]
+                                                                 |
+                       17                                        |                          q
+                    /     \                                      |                       /     \
+                  /         \                                    |                     /         \
+                /             \                                  |                   /             \
+              16               15                                |                  p               o
+            /    \           /    \                              |                /   \           /   \
+          13      9        10      14                            |               m     i         j     n
+        /  \     / \      / \      / \                           |              / \   / \       / \    / \
+      11    2   5   4    3   6   12   7                          |             k   b e   d     c   f  l   g
+     /  \                                                        |            / \
+    8    1                                                       |           h   a
+                                                                 |
+2.3 Posloupnost výpisu do šířky:                                 |   3.3 Posloupnost výpisu do šířky:
+    17, 16, 15, 13, 9, 10, 14, 11, 2, 5, 4, 3, 6, 12, 7, 8, 1    |       q, p, o, m, i, j, n, k, b, e, d, c, f, l, g, h, a
+2.4 Posloupnost výpisu do hloubky (in-order):                    |   3.4 Posloupnost výpisu do hloubky (in-order):
+    2.4.1 Prioritní fronta:                                      |       3.4.1 Prioritní fronta:
+    17, 16, 13, 11, 8, 1, 2, 9, 5, 4, 15, 10, 3, 6, 14, 12, 7    |       q, p, m, k, h, a, b, i, e, d, o, j, c, f, n, l, g
+    2.4.2 Binární vyhledávací strom:                             |       3.4.2 Binární vyhledávací strom:
+    8, 11, 1, 13, 2, 16, 5, 9, 4, 17, 3, 10, 6, 15, 12, 14, 7    |       h, k, a, m, b, p, e, i, d, q, c, j, f, o, l, n, g
+                                                                 |
+3) Metoda vybuduj(). Posloupnost přidání (počty obyvatel):       |   4) Metoda vybuduj(). Posloupnost přidání (názvy obcí):
+3.1 Neupořádaná halda:                                           |   4.1 Neupořádaná halda:
+    [5, 2, 9, 1, 7]                                              |       [e, b, i, a, g]
+3.2 Uspořádaná halda:                                            |   4.2 Uspořádaná halda:
+    [9, 7, 5, 1, 2]                                              |       [i, g, e, a, b]
+                                                                 |
+                        9                                        |                         i
+                      /   \                                      |                       /   \
+                     7     5                                     |                      g     e
+                   /  \                                          |                     / \
+                  1    2                                         |                    a   b
+                                                                 |
+3.3 Posloupnost výpisu do šířky:                                 |   4.3 Posloupnost výpisu do šířky:
+    9, 7, 5, 1, 2                                                |       i, g, e, a, b
+3.4 Posloupnost výpisu do hloubky (pre-order):                   |   4.4 Posloupnost výpisu do hloubky (pre-order):
+    9, 7, 1, 2, 5                                                |       i, g, a, b, e
