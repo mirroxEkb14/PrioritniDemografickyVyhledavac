@@ -25,4 +25,7 @@ Pozn.: jelikož operace **Vybuduj** a **Reorganizace** nejsou standartními oper
 ## Vybudování levostranné haldy (Heap sort)
 
 ![alt heap-sort-image-1](/resources/heap-sort-1.png)
+
+<hr>
+
 ![alt heap-sort-image-2](/resources/heap-sort-2.png)
